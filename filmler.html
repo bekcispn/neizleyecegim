@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Filmler - TMDB En İyi ve Popüler | Abican</title>
+    <title>Filmler - US/UK/Europe | Abican</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         * {
@@ -348,6 +348,16 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
+        .region-badge {
+            text-align: center;
+            background: #1e293b;
+            display: inline-block;
+            padding: 0.2rem 1rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            margin-bottom: 0.5rem;
+        }
     </style>
 </head>
 <body>
@@ -357,6 +367,13 @@
         <h1><i class="fas fa-film"></i> ABICAN FİLMLER</h1>
     </div>
     <button class="back-btn" onclick="window.location.href='index.html'"><i class="fas fa-arrow-left"></i> Ana Menü</button>
+</div>
+
+<div style="text-align: center; margin-top: 0.5rem;">
+    <span class="region-badge"><i class="fas fa-globe-americas"></i> USA</span>
+    <span class="region-badge"><i class="fas fa-globe-europe"></i> UK</span>
+    <span class="region-badge"><i class="fas fa-globe-europe"></i> Europe</span>
+    <span class="region-badge"><i class="fas fa-dragon"></i> Anime (Max 15)</span>
 </div>
 
 <div class="sort-tabs">
@@ -369,7 +386,7 @@
 <div class="film-grid" id="filmGrid"></div>
 <div class="load-more-container" id="loadMoreContainer"></div>
 <div class="footer">
-    <i class="fas fa-star" style="color: #f5c518;"></i> TMDB'den gerçek zamanlı • 
+    <i class="fas fa-star" style="color: #f5c518;"></i> Sadece US/UK/Europe yapımları • 
     <i class="fas fa-check-circle" style="color: #10b981;"></i> İzlediklerin kaybolur
 </div>
 
@@ -396,21 +413,23 @@
 </div>
 
 <script>
-    // ============ TMDB API ============
     const TMDB_API_KEY = "b429c973c6c98439cf6e504e7ffe1678";  // ← API KEY'İNİ BURAYA YAZ
     const TMDB_BASE_URL = "https://api.themoviedb.org/3";
     const IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500";
 
+    // Sadece ABD, İngiltere ve Avrupa ülkeleri
+    const ALLOWED_COUNTRIES = ["US", "GB", "FR", "DE", "IT", "ES", "NL", "BE", "SE", "NO", "DK", "FI", "PL", "AT", "CH", "IE", "PT", "GR", "CZ", "HU"];
+    
     let currentSort = "top_rated";
     let currentCategory = "all";
     let currentPage = 1;
     let isLoading = false;
     let hasMore = true;
     let allMovies = [];
+    let animeCount = 0;
     let watchedIds = JSON.parse(localStorage.getItem("watched_film_ids")) || [];
     let currentMovieId = null;
 
-    // Kategori ID'leri
     const genreMap = {
         "all": null,
         "Aksiyon": 28,
@@ -419,14 +438,14 @@
         "Komedi": 35,
         "Suç": 80,
         "Dram": 18,
-        "Aile": 10751,
         "Fantastik": 14,
         "Korku": 27,
         "Romantik": 10749,
         "Bilim Kurgu": 878,
         "Gerilim": 53,
         "Savaş": 10752,
-        "Gizem": 9648
+        "Gizem": 9648,
+        "Tarihi": 36
     };
 
     function saveWatched(id) {
@@ -450,13 +469,13 @@
         
         let url;
         if(currentSort === "top_rated") {
-            url = `${TMDB_BASE_URL}/movie/top_rated?api_key=${TMDB_API_KEY}&language=tr-TR&page=${page}`;
+            url = `${TMDB_BASE_URL}/movie/top_rated?api_key=${TMDB_API_KEY}&language=tr-TR&page=${page}&region=US`;
         } else {
-            url = `${TMDB_BASE_URL}/movie/popular?api_key=${TMDB_API_KEY}&language=tr-TR&page=${page}`;
+            url = `${TMDB_BASE_URL}/movie/popular?api_key=${TMDB_API_KEY}&language=tr-TR&page=${page}&region=US`;
         }
         
         if(currentCategory !== "all" && genreMap[currentCategory]) {
-            url = `${TMDB_BASE_URL}/discover/movie?api_key=${TMDB_API_KEY}&language=tr-TR&with_genres=${genreMap[currentCategory]}&sort_by=${currentSort === "top_rated" ? "vote_average.desc" : "popularity.desc"}&vote_count.gte=100&page=${page}`;
+            url = `${TMDB_BASE_URL}/discover/movie?api_key=${TMDB_API_KEY}&language=tr-TR&with_genres=${genreMap[currentCategory]}&sort_by=${currentSort === "top_rated" ? "vote_average.desc" : "popularity.desc"}&vote_count.gte=200&page=${page}&region=US`;
         }
         
         try {
@@ -464,12 +483,48 @@
             const data = await response.json();
             
             if(data.results && data.results.length > 0) {
-                const detailedMovies = await Promise.all(
-                    data.results.map(async (movie) => {
-                        const detailUrl = `${TMDB_BASE_URL}/movie/${movie.id}?api_key=${TMDB_API_KEY}&language=tr-TR`;
-                        const detailResponse = await fetch(detailUrl);
-                        const detailData = await detailResponse.json();
-                        return {
+                const detailedMovies = [];
+                
+                for(const movie of data.results) {
+                    // Anime sınırlaması (Animasyon kategorisi için max 15)
+                    if(currentCategory === "Animasyon" || (movie.genre_ids && movie.genre_ids.includes(16))) {
+                        if(animeCount >= 15 && currentCategory === "all") {
+                            continue;
+                        }
+                        if(currentCategory === "Animasyon" && animeCount >= 15) {
+                            hasMore = false;
+                            break;
+                        }
+                    }
+                    
+                    const detailUrl = `${TMDB_BASE_URL}/movie/${movie.id}?api_key=${TMDB_API_KEY}&language=tr-TR`;
+                    const detailResponse = await fetch(detailUrl);
+                    const detailData = await detailResponse.json();
+                    
+                    // Ülke kontrolü - Sadece US/UK/Europe
+                    const productionCountries = detailData.production_countries || [];
+                    const isAllowedCountry = productionCountries.some(c => ALLOWED_COUNTRIES.includes(c.iso_3166_1));
+                    const isAnime = movie.genre_ids && movie.genre_ids.includes(16);
+                    
+                    // Anime için özel durum: Anime ise ve 15'i geçmediyse ekle
+                    if(isAnime) {
+                        if(animeCount < 15) {
+                            animeCount++;
+                            detailedMovies.push({
+                                id: movie.id,
+                                title: movie.title,
+                                poster: movie.poster_path ? `${IMAGE_BASE_URL}${movie.poster_path}` : null,
+                                year: movie.release_date ? movie.release_date.split('-')[0] : "?",
+                                imdb: movie.vote_average ? movie.vote_average.toFixed(1) : "?",
+                                runtime: detailData.runtime ? `${Math.floor(detailData.runtime / 60)}s ${detailData.runtime % 60}dk` : "?",
+                                plot: detailData.overview || "Konu bilgisi bulunamadı.",
+                                category: currentCategory
+                            });
+                        }
+                    } 
+                    // Anime değilse sadece US/UK/Europe kontrolü yap
+                    else if(isAllowedCountry) {
+                        detailedMovies.push({
                             id: movie.id,
                             title: movie.title,
                             poster: movie.poster_path ? `${IMAGE_BASE_URL}${movie.poster_path}` : null,
@@ -478,9 +533,9 @@
                             runtime: detailData.runtime ? `${Math.floor(detailData.runtime / 60)}s ${detailData.runtime % 60}dk` : "?",
                             plot: detailData.overview || "Konu bilgisi bulunamadı.",
                             category: currentCategory
-                        };
-                    })
-                );
+                        });
+                    }
+                }
                 
                 if(append) {
                     if(page === 1) {
@@ -492,7 +547,7 @@
                     allMovies = detailedMovies;
                 }
                 
-                hasMore = data.page < data.total_pages && data.page < 20;
+                hasMore = data.page < data.total_pages && data.page < 25 && allMovies.length < 600;
                 currentPage = page;
             } else {
                 hasMore = false;
@@ -509,15 +564,15 @@
 
     function showLoading() {
         const container = document.getElementById("loadMoreContainer");
-        container.innerHTML = '<div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> Filmler yükleniyor...</div>';
+        container.innerHTML = '<div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> Filmler yükleniyor (Sadece US/UK/Europe)...</div>';
     }
 
     function hideLoading() {
         const container = document.getElementById("loadMoreContainer");
-        if(hasMore && !isLoading) {
-            container.innerHTML = '<button class="load-more-btn" onclick="loadMore()"><i class="fas fa-arrow-down"></i> Daha Fazla Film Yükle (600+ hedefi)</button>';
-        } else if(!hasMore) {
-            container.innerHTML = '<p style="color: #475569;"><i class="fas fa-check-circle"></i> 600+ film yüklendi! Hepsi bu kadar.</p>';
+        if(hasMore && !isLoading && allMovies.length < 600) {
+            container.innerHTML = '<button class="load-more-btn" onclick="loadMore()"><i class="fas fa-arrow-down"></i> Daha Fazla Film Yükle (600 hedefi)</button>';
+        } else if(!hasMore || allMovies.length >= 600) {
+            container.innerHTML = `<p style="color: #475569;"><i class="fas fa-check-circle"></i> ${allMovies.length} film yüklendi! (US/UK/Europe yapımları)</p>`;
         } else {
             container.innerHTML = '';
         }
@@ -533,13 +588,8 @@
         const grid = document.getElementById("filmGrid");
         let filteredMovies = allMovies.filter(m => !isWatched(m.id));
         
-        if(currentCategory !== "all") {
-            // Kategori filtreleme zaten API'den geliyor ama ekstra güvenlik için
-            filteredMovies = filteredMovies;
-        }
-        
         const stats = document.getElementById("stats");
-        stats.innerHTML = `<i class="fas fa-film"></i> Toplam ${filteredMovies.length} / ${allMovies.length} film gösteriliyor <i class="fas fa-eye-slash"></i> İzlediklerin çıkarıldı | Hedef: 600+ film`;
+        stats.innerHTML = `<i class="fas fa-film"></i> Toplam ${filteredMovies.length} / ${allMovies.length} film gösteriliyor (Sadece US/UK/Europe) | Anime: ${animeCount}/15`;
         
         if(filteredMovies.length === 0 && allMovies.length > 0) {
             grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:3rem;"><i class="fas fa-trophy" style="font-size: 3rem; color: #f5c518;"></i><p style="margin-top: 1rem;">🎉 Tebrikler! Tüm filmleri izledin!</p></div>`;
@@ -634,6 +684,7 @@
                 currentCategory = cat;
                 currentPage = 1;
                 allMovies = [];
+                animeCount = 0;
                 hasMore = true;
                 renderCategories();
                 fetchMovies(1, true);
@@ -646,6 +697,7 @@
         currentSort = sort;
         currentPage = 1;
         allMovies = [];
+        animeCount = 0;
         hasMore = true;
         
         document.querySelectorAll(".sort-btn").forEach(btn => {
