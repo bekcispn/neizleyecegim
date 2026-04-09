@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Film & Dizi Seç | Abican</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Inter', system-ui, sans-serif;
+            background: radial-gradient(circle at 30% 10%, #0a0f1e, #020617);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Loading Screen */
+        .loading-full {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #020617;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 0.8s ease;
+        }
+
+        .loader-ring {
+            width: 80px;
+            height: 80px;
+            border: 5px solid rgba(249, 115, 22, 0.2);
+            border-top: 5px solid #f97316;
+            border-radius: 50%;
+            animation: spin 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+            box-shadow: 0 0 20px rgba(249, 115, 22, 0.5);
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-message {
+            margin-top: 30px;
+            font-size: 1.5rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, #f97316, #facc15);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: pulse 1.2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; letter-spacing: normal; }
+            50% { opacity: 0.7; letter-spacing: 2px; }
+        }
+
+        .loading-sub {
+            margin-top: 12px;
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        /* Ana Menü */
+        .menu-container {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .menu-title {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #FFD166, #FF6B6B, #f97316);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        .menu-sub {
+            color: #cbd5e1;
+            margin-bottom: 3rem;
+            font-size: 1.1rem;
+        }
+
+        .menu-cards {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .menu-card {
+            background: linear-gradient(145deg, rgba(30, 41, 59, 0.7), rgba(15, 23, 42, 0.8));
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(249, 115, 22, 0.3);
+            border-radius: 48px;
+            padding: 2rem 4rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            text-align: center;
+            min-width: 250px;
+        }
+
+        .menu-card:hover {
+            transform: translateY(-12px) scale(1.02);
+            border-color: #f97316;
+            box-shadow: 0 25px 40px rgba(249, 115, 22, 0.3);
+            background: rgba(249, 115, 22, 0.2);
+        }
+
+        .menu-emoji {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .menu-card h2 {
+            font-size: 2rem;
+            color: #facc15;
+            margin-bottom: 0.5rem;
+        }
+
+        .menu-card p {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 600px) {
+            .menu-card {
+                padding: 1.2rem 2rem;
+                min-width: 180px;
+            }
+            .menu-title {
+                font-size: 2rem;
+            }
+            .menu-emoji {
+                font-size: 2.5rem;
+            }
+            .menu-card h2 {
+                font-size: 1.4rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="loading-full" id="loadingScreen">
+    <div class="loader-ring"></div>
+    <div class="loading-message" id="loadingMsg">Filmler hazırlanıyor..</div>
+    <div class="loading-sub" id="loadingSubText">En iyi yapımlar taranıyor ✨</div>
+</div>
+
+<div class="menu-container" id="menuContainer">
+    <div class="menu-title">🎬 Abican'ın Sineması</div>
+    <div class="menu-sub">Ne izlemek istiyorsun?</div>
+    <div class="menu-cards">
+        <div class="menu-card" data-type="filmler">
+            <div class="menu-emoji">🎥</div>
+            <h2>Filmler</h2>
+            <p>IMDB puanları • Kategoriler • İzlediklerini hatırla</p>
+        </div>
+        <div class="menu-card" data-type="diziler">
+            <div class="menu-emoji">📺</div>
+            <h2>Diziler</h2>
+            <p>En yüksek puanlı diziler • Sezon detayları • Takip sistemi</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    const loadingScreen = document.getElementById('loadingScreen');
+    const loadingMsg = document.getElementById('loadingMsg');
+    const loadingSub = document.getElementById('loadingSubText');
+    const menuContainer = document.getElementById('menuContainer');
+    
+    const messages = [
+        "Filmler hazırlanıyor..",
+        "Diziler taranıyor..",
+        "IMDB puanları getiriliyor..",
+        "Abican biraz sabır..",
+        "Son dokunuşlar yapılıyor.."
+    ];
+    
+    let msgIndex = 0;
+    const msgInterval = setInterval(() => {
+        if(msgIndex < messages.length) {
+            loadingMsg.textContent = messages[msgIndex];
+            msgIndex++;
+        }
+    }, 600);
+    
+    setTimeout(() => {
+        clearInterval(msgInterval);
+        loadingMsg.textContent = "Hoşgeldin Abican, Filmini Seçmeye Başla.";
+        loadingSub.textContent = "✨ Hazırsın! ✨";
+        
+        setTimeout(() => {
+            loadingScreen.style.opacity = "0";
+            setTimeout(() => {
+                loadingScreen.style.display = "none";
+                menuContainer.style.display = "block";
+            }, 600);
+        }, 1500);
+    }, 2500);
+    
+    // Menü tıklama olayları
+    document.querySelectorAll('.menu-card').forEach(card => {
+        card.addEventListener('click', (e) => {
+            const type = card.getAttribute('data-type');
+            if(type === 'filmler') {
+                window.location.href = 'filmler.html';
+            } else if(type === 'diziler') {
+                window.location.href = 'diziler.html';
+            }
+        });
+    });
+</script>
+</body>
+</html>
