@@ -2,8 +2,9 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Filmler - IMDB En Yüksek Puanlılar | Abican</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -12,164 +13,318 @@
         }
 
         body {
-            font-family: 'Segoe UI', 'Inter', system-ui, sans-serif;
-            background: linear-gradient(135deg, #0b1120, #030712);
+            font-family: 'Poppins', 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #0a0f1e 0%, #030712 100%);
             color: #f1f5f9;
             min-height: 100vh;
         }
 
         .header {
-            background: linear-gradient(112deg, rgba(15, 25, 45, 0.95), rgba(0, 0, 0, 0.85));
-            backdrop-filter: blur(18px);
-            padding: 1.5rem 2rem;
+            background: rgba(15, 25, 45, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 1rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
             gap: 1rem;
-            border-bottom: 2px solid #f5c518;
+            border-bottom: 1px solid rgba(245, 197, 24, 0.3);
             position: sticky;
             top: 0;
             z-index: 100;
         }
 
-        .logo {
-            font-size: 1.5rem;
-            font-weight: bold;
+        .logo h1 {
+            font-size: 1.3rem;
             background: linear-gradient(135deg, #f5c518, #f97316);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
         }
 
+        .logo i {
+            color: #f5c518;
+            margin-right: 8px;
+        }
+
         .back-btn {
-            background: #1e293b;
-            border: none;
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(245, 197, 24, 0.3);
             padding: 0.5rem 1.2rem;
             border-radius: 40px;
             color: #f5c518;
             cursor: pointer;
             font-weight: 600;
-            transition: 0.2s;
+            transition: all 0.2s;
         }
 
         .back-btn:hover {
             background: #f5c518;
             color: #0f172a;
+            transform: scale(1.02);
         }
 
         .category-tabs {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 0.7rem;
-            margin: 1.8rem 1rem;
-            max-height: 120px;
-            overflow-y: auto;
-            padding: 0.5rem;
+            gap: 0.6rem;
+            margin: 1.5rem 1rem;
         }
 
         .cat-btn {
-            background: #1e293b;
-            border: none;
-            padding: 0.6rem 1.3rem;
-            border-radius: 60px;
-            color: #e2e8f0;
-            font-weight: 600;
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
+            color: #cbd5e1;
+            font-weight: 500;
             cursor: pointer;
-            transition: 0.2s;
-            font-size: 0.85rem;
-            white-space: nowrap;
+            transition: all 0.2s;
+            font-size: 0.8rem;
+        }
+
+        .cat-btn i {
+            margin-right: 6px;
+            font-size: 0.7rem;
         }
 
         .cat-btn.active {
             background: #f5c518;
-            color: #0a0c15;
-            box-shadow: 0 0 10px #f5c518;
+            color: #0f172a;
+            border-color: #f5c518;
         }
 
         .film-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
-            gap: 1.8rem;
-            padding: 1rem 2rem 3rem;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 1.5rem;
+            padding: 1rem 1.5rem 3rem;
             max-width: 1400px;
             margin: 0 auto;
         }
 
         .film-card {
-            background: rgba(17, 24, 39, 0.75);
-            backdrop-filter: blur(6px);
-            border-radius: 28px;
+            background: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
             overflow: hidden;
-            border: 1px solid rgba(245, 197, 24, 0.2);
-            transition: all 0.25s;
+            border: 1px solid rgba(245, 197, 24, 0.15);
+            transition: all 0.3s ease;
+            cursor: pointer;
         }
 
         .film-card:hover {
-            transform: translateY(-7px);
+            transform: translateY(-6px);
             border-color: #f5c518;
-            box-shadow: 0 20px 28px -12px black;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
         }
 
         .poster {
             width: 100%;
             height: 300px;
             object-fit: cover;
-            background: #0f172a;
+            background: linear-gradient(135deg, #1e293b, #0f172a);
         }
 
         .info {
-            padding: 1rem;
+            padding: 0.9rem;
         }
 
         .title {
-            font-weight: 700;
-            font-size: 0.95rem;
+            font-weight: 600;
+            font-size: 0.9rem;
             margin-bottom: 0.3rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .imdb {
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
             background: #f5c518;
             color: #000;
             font-weight: bold;
-            padding: 0.15rem 0.7rem;
+            padding: 0.2rem 0.6rem;
             border-radius: 20px;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             margin: 0.5rem 0;
         }
 
         .duration {
-            font-size: 0.75rem;
-            color: #9ca3af;
+            font-size: 0.7rem;
+            color: #94a3b8;
             margin: 6px 0;
         }
 
         .watched-btn {
-            background: #2d3a4e;
+            background: rgba(45, 58, 78, 0.8);
             border: none;
             color: #f5c518;
-            padding: 0.45rem;
-            border-radius: 40px;
+            padding: 0.4rem;
+            border-radius: 30px;
             font-size: 0.7rem;
-            font-weight: bold;
-            margin-top: 0.7rem;
+            font-weight: 600;
+            margin-top: 0.6rem;
             width: 100%;
             cursor: pointer;
-            transition: 0.2s;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
         }
 
         .watched-btn.watched {
             background: #10b981;
             color: white;
             cursor: default;
-            opacity: 0.7;
+            opacity: 0.8;
+        }
+
+        /* Modal/Detay Sayfası */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            border-radius: 30px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 85vh;
+            overflow-y: auto;
+            border: 1px solid rgba(245, 197, 24, 0.3);
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            position: relative;
+        }
+
+        .modal-poster {
+            width: 100%;
+            height: 350px;
+            object-fit: cover;
+            border-radius: 30px 30px 0 0;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(0, 0, 0, 0.6);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .modal-close:hover {
+            background: #f97316;
+            transform: scale(1.1);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-meta {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin: 1rem 0;
+        }
+
+        .modal-imdb {
+            background: #f5c518;
+            color: #000;
+            padding: 0.2rem 0.8rem;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .modal-year {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.2rem 0.8rem;
+            border-radius: 20px;
+        }
+
+        .modal-duration {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.2rem 0.8rem;
+            border-radius: 20px;
+        }
+
+        .modal-category {
+            background: rgba(249, 115, 22, 0.3);
+            padding: 0.2rem 0.8rem;
+            border-radius: 20px;
+        }
+
+        .modal-plot {
+            margin: 1rem 0;
+            line-height: 1.6;
+            color: #cbd5e1;
+        }
+
+        .modal-plot h4 {
+            color: #f5c518;
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-watch-btn {
+            width: 100%;
+            padding: 0.8rem;
+            background: #f5c518;
+            border: none;
+            border-radius: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 1rem;
+            transition: all 0.2s;
+        }
+
+        .modal-watch-btn.watched-modal {
+            background: #10b981;
+            color: white;
         }
 
         .footer {
             text-align: center;
-            padding: 2rem;
+            padding: 1.5rem;
             font-size: 0.7rem;
             color: #475569;
         }
@@ -185,187 +340,154 @@
 <body>
 
 <div class="header">
-    <div class="logo">🎬 ABICAN FİLMLER | IMDB PUANLARI</div>
-    <button class="back-btn" onclick="window.location.href='index.html'">← Ana Menüye Dön</button>
+    <div class="logo">
+        <h1><i class="fas fa-film"></i> ABICAN FİLMLER</h1>
+    </div>
+    <button class="back-btn" onclick="window.location.href='index.html'"><i class="fas fa-arrow-left"></i> Ana Menü</button>
 </div>
 
 <div class="category-tabs" id="categoryContainer"></div>
 <div class="stats" id="stats"></div>
 <div class="film-grid" id="filmGrid"></div>
-<div class="footer">⭐ IMDB puanlarına göre sıralanmış en iyi filmler • İzlediklerin kaybolur</div>
+<div class="footer">
+    <i class="fas fa-star" style="color: #f5c518;"></i> IMDB puanları güncel • 
+    <i class="fas fa-check-circle" style="color: #10b981;"></i> İzlediklerin kaybolur •
+    <i class="fas fa-info-circle"></i> Filme tıkla detayları gör
+</div>
+
+<!-- Modal -->
+<div id="modal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <img id="modalPoster" class="modal-poster" src="" alt="">
+            <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body">
+            <h2 class="modal-title" id="modalTitle"></h2>
+            <div class="modal-meta">
+                <span class="modal-imdb" id="modalImdb"><i class="fab fa-imdb"></i> </span>
+                <span class="modal-year" id="modalYear"><i class="far fa-calendar-alt"></i> </span>
+                <span class="modal-duration" id="modalDuration"><i class="far fa-clock"></i> </span>
+                <span class="modal-category" id="modalCategory"><i class="fas fa-tag"></i> </span>
+            </div>
+            <div class="modal-plot">
+                <h4><i class="fas fa-align-left"></i> Konusu</h4>
+                <p id="modalPlot"></p>
+            </div>
+            <button class="modal-watch-btn" id="modalWatchBtn"><i class="fas fa-eye"></i> İZLEDİM</button>
+        </div>
+    </div>
+</div>
 
 <script>
-    // ============ FİLMLER - HER KATEGORİDEN EN AZ 50, TOPLAM 400'E YAKIN ============
-    const FILMLER = [];
-    let filmId = 1;
-
-    // 1. AKSİYON (60 film)
-    const aksiyonFilmler = [
-        "The Dark Knight", "Inception", "The Matrix", "Gladiator", "John Wick", "Mad Max: Fury Road", "Die Hard", "Terminator 2", "The Bourne Ultimatum", "Mission Impossible Fallout",
-        "The Raid Redemption", "Oldboy", "Kill Bill Vol 1", "Kill Bill Vol 2", "Casino Royale", "Skyfall", "The Dark Knight Rises", "Batman Begins", "Iron Man", "The Avengers",
-        "Captain America Winter Soldier", "Black Panther", "Wonder Woman", "Logan", "Deadpool", "Edge of Tomorrow", "Minority Report", "V for Vendetta", "Watchmen", "300",
-        "The Equalizer", "Taken", "The Transporter", "Crouching Tiger Hidden Dragon", "Hero", "Face Off", "Con Air", "The Rock", "Bad Boys", "Lethal Weapon",
-        "Beverly Hills Cop", "Rambo First Blood", "Predator", "Commando", "True Lies", "Speed", "Point Break", "The Fugitive", "Air Force One", "Enemy of the State",
-        "Man on Fire", "The Italian Job", "Fast Five", "Furious 7", "The Town", "Heat", "Collateral", "Public Enemies", "The Untouchables", "Scarface"
+    // FİLMLER - GERÇEK IMDB, YIL, TÜRKÇE KONU
+    const FILMLER = [
+        { 
+            id: 1, title: "The Shawshank Redemption", category: "Dram", 
+            poster: "https://image.tmdb.org/t/p/w500/q6y0Go1tsGEsmtFryDOJo3dEmqu.jpg", 
+            duration: "2s 22dk", imdb: "9.3", year: "1994",
+            plot: "Genç ve başarılı bir bankacı olan Andy Dufresne, karısını ve sevgilisini öldürmekten suçlu bulunarak Shawshank Hapishanesi'ne gönderilir. Masum olmasına rağmen hapishanenin acımasız dünyasında hayatta kalmayı öğrenen Andy, arkadaşı Red ile birlikte umudu asla kaybetmez."
+        },
+        { 
+            id: 2, title: "The Godfather", category: "Suç", 
+            poster: "https://image.tmdb.org/t/p/w500/3bhkrj58Vtu7enYsRolD1fZdja1.jpg", 
+            duration: "2s 55dk", imdb: "9.2", year: "1972",
+            plot: "Mafya babası Don Vito Corleone, bir suikast sonucu ölümcül şekilde yaralanınca ailenin başına en küçük oğlu Michael geçer. Michael, babasının intikamını almak için acımasız bir savaşa girişir."
+        },
+        { 
+            id: 3, title: "The Dark Knight", category: "Aksiyon", 
+            poster: "https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg", 
+            duration: "2s 32dk", imdb: "9.0", year: "2008",
+            plot: "Batman, Gotham şehrini suçtan temizlemek için Joker adlı psikopat bir suçluyla yüzleşir. Joker, şehri kaosa sürükleyerek Batman'in en büyük sınavını vermesine neden olur."
+        },
+        { 
+            id: 4, title: "Pulp Fiction", category: "Suç", 
+            poster: "https://image.tmdb.org/t/p/w500/d5iIlFn5s0ImszYzBPb8JPIfbXD.jpg", 
+            duration: "2s 34dk", imdb: "8.9", year: "1994",
+            plot: "Birbirine bağlı üç farklı hikayede, kiralık katiller, bir boksör ve bir gangsterin karısının Los Angeles'ın yeraltı dünyasında yaşadıkları anlatılır."
+        },
+        { 
+            id: 5, title: "Inception", category: "Bilim Kurgu", 
+            poster: "https://image.tmdb.org/t/p/w500/edv5CZvWj09upOsy2Y6IwDhK8bt.jpg", 
+            duration: "2s 28dk", imdb: "8.8", year: "2010",
+            plot: "Dom Cobb, rüya paylaşım teknolojisi kullanarak bir CEO'nun zihnine bir fikir yerleştirmek için son bir görevi kabul eder. Ancak geçmişindeki sırlar onu tehdit etmektedir."
+        },
+        { 
+            id: 6, title: "Forrest Gump", category: "Dram", 
+            poster: "https://image.tmdb.org/t/p/w500/arw2vcBveWOVZr6pxd9XTd1TdQa.jpg", 
+            duration: "2s 22dk", imdb: "8.8", year: "1994",
+            plot: "Zeka seviyesi düşük olan Forrest Gump, hayatı boyunca tesadüflerle dolu bir yolculuk yapar. Amerikan tarihinin önemli anlarına tanıklık eden Forrest, sevdiği kız Jenny'nin peşinden koşar."
+        },
+        { 
+            id: 7, title: "Fight Club", category: "Dram", 
+            poster: "https://image.tmdb.org/t/p/w500/pB8BM7pdSp6B6Ih7QZ4DrQ3PmJK.jpg", 
+            duration: "2s 19dk", imdb: "8.8", year: "1999",
+            plot: "Uykusuzluk çeken bir ofis çalışanı, sabun satıcısı Tyler Durden ile tanışır ve birlikte yeraltı dövüş kulüpleri kurarlar. Ancak bu kulüp kısa sürede kontrolden çıkar."
+        },
+        { 
+            id: 8, title: "The Matrix", category: "Bilim Kurgu", 
+            poster: "https://image.tmdb.org/t/p/w500/f89U3ADr1oiB1s9GkdPOEpXUk5H.jpg", 
+            duration: "2s 16dk", imdb: "8.7", year: "1999",
+            plot: "Bilgisayar korsanı Neo, yaşadığı dünyanın aslında bir simülasyon olduğunu öğrenir. Gerçek dünyada insanlığı köleleştiren makinelere karşı savaşmak zorundadır."
+        },
+        { 
+            id: 9, title: "Interstellar", category: "Bilim Kurgu", 
+            poster: "https://image.tmdb.org/t/p/w500/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg", 
+            duration: "2s 49dk", imdb: "8.6", year: "2014",
+            plot: "Dünya'nın yaşanamaz hale geldiği bir gelecekte, bir grup astronot insanlık için yeni bir yaşam alanı bulmak amacıyla bir solucan deliğinden geçer."
+        },
+        { 
+            id: 10, title: "Gladiator", category: "Aksiyon", 
+            poster: "https://image.tmdb.org/t/p/w500/ty8TGRuvJLPUmAR1H1nRIsgwvim.jpg", 
+            duration: "2s 35dk", imdb: "8.5", year: "2000",
+            plot: "Roma İmparatoru'nun ihanetine uğrayan General Maximus, ailesini kaybeder ve köle olarak satılır. Arenada bir gladyatör olarak intikam yemini eder."
+        },
+        { 
+            id: 11, title: "The Silence of the Lambs", category: "Korku", 
+            poster: "https://image.tmdb.org/t/p/w500/uS9m8OBkOCA6KUiJSfUar5WZzDp.jpg", 
+            duration: "1s 58dk", imdb: "8.6", year: "1991",
+            plot: "FBI ajanı Clarice Starling, bir seri katili yakalamak için akıl hastanesinde tutulan psikiyatrist ve kanibal Dr. Hannibal Lecter'dan yardım ister."
+        },
+        { 
+            id: 12, title: "The Green Mile", category: "Dram", 
+            poster: "https://image.tmdb.org/t/p/w500/8VG8fDNiy50H4FedGmdSVzyoaMv.jpg", 
+            duration: "3s 09dk", imdb: "8.6", year: "1999",
+            plot: "İdam cezası koğuşunda çalışan bir gardiyan, doğaüstü güçleri olan dev bir mahkumla tanışır ve hayatı değişir."
+        },
+        { 
+            id: 13, title: "Spirited Away", category: "Animasyon", 
+            poster: "https://image.tmdb.org/t/p/w500/39wmItIWsg5sZMyRUHLkWBcuVCM.jpg", 
+            duration: "2s 05dk", imdb: "8.6", year: "2001",
+            plot: "Küçük Chihiro, ailesiyle birlikte taşınırken gizemli bir tünelin içinde kaybolur ve ruhlar dünyasına adım atar. Ailesini kurtarmak için bu garip dünyada çalışmak zorundadır."
+        },
+        { 
+            id: 14, title: "The Lord of the Rings: Fellowship", category: "Macera", 
+            poster: "https://image.tmdb.org/t/p/w500/6oom5QYQ2yQTMJIbnvbkBL9cHo6.jpg", 
+            duration: "2s 58dk", imdb: "8.8", year: "2001",
+            plot: "Genç bir hobbit olan Frodo, tüm dünyayı yok edebilecek yüzüğü yok etmek için tehlikeli bir yolculuğa çıkar. Yanında büyücü, elf, cüce ve insanlardan oluşan bir ekip vardır."
+        },
+        { 
+            id: 15, title: "Joker", category: "Dram", 
+            poster: "https://image.tmdb.org/t/p/w500/udDclJoHjfjb8Ekgsd4FDteOkCU.jpg", 
+            duration: "2s 02dk", imdb: "8.4", year: "2019",
+            plot: "Arthur Fleck, toplum tarafından dışlanmış bir komedyendir. Gotham şehrinin kaosuna sürüklenen Arthur, yavaşça ünlü suçlu Joker'e dönüşür."
+        }
     ];
-    aksiyonFilmler.forEach((title, idx) => {
-        FILMLER.push({
-            id: filmId++, title: title, category: "Aksiyon",
-            poster: `https://image.tmdb.org/t/p/w500/${8 + idx % 100}/300/450`,
-            duration: `${1 + (idx % 3)}s ${20 + (idx * 7) % 50}dk`,
-            imdb: (8.0 + (idx % 20) / 10).toFixed(1)
-        });
-    });
-
-    // 2. KORKU (55 film)
-    const korkuFilmler = [
-        "The Shining", "The Exorcist", "Halloween", "A Nightmare on Elm Street", "Friday the 13th", "Scream", "The Conjuring", "Insidious", "Sinister", "Hereditary",
-        "The Babadook", "It Follows", "The Witch", "Get Out", "Us", "A Quiet Place", "The Ring", "The Grudge", "Paranormal Activity", "The Blair Witch Project",
-        "Rosemary's Baby", "The Texas Chainsaw Massacre", "Psycho", "The Silence of the Lambs", "Alien", "The Thing", "Poltergeist", "Carrie", "Misery", "The Mist",
-        "28 Days Later", "Dawn of the Dead", "The Descent", "The Others", "The Orphanage", "Let the Right One In", "The Cabin in the Woods", "Evil Dead", "The Omen",
-        "The Wicker Man", "Suspiria", "The Lighthouse", "Midsommar", "The Invisible Man", "Don't Breathe", "Hush", "The Strangers", "You're Next", "Ready or Not",
-        "The Collector", "The Purge", "Happy Death Day", "Freaky", "Scream VI"
-    ];
-    korkuFilmler.forEach((title, idx) => {
-        FILMLER.push({
-            id: filmId++, title: title, category: "Korku",
-            poster: `https://image.tmdb.org/t/p/w500/${15 + idx % 100}/300/450`,
-            duration: `${1 + (idx % 3)}s ${15 + (idx * 5) % 55}dk`,
-            imdb: (7.0 + (idx % 25) / 10).toFixed(1)
-        });
-    });
-
-    // 3. DRAM (65 film)
-    const dramFilmler = [
-        "The Shawshank Redemption", "The Godfather", "The Godfather Part II", "Schindler's List", "Forrest Gump", "Fight Club", "Goodfellas", "The Green Mile", "The Pianist", "Gladiator",
-        "The Departed", "American Beauty", "Million Dollar Baby", "Slumdog Millionaire", "The King's Speech", "12 Years a Slave", "Birdman", "Spotlight", "Moonlight", "The Shape of Water",
-        "Parasite", "Nomadland", "CODA", "Everything Everywhere All at Once", "Oppenheimer", "Killers of the Flower Moon", "The Irishman", "Marriage Story", "Manchester by the Sea", "La La Land",
-        "Whiplash", "Black Swan", "The Wrestler", "Requiem for a Dream", "The Social Network", "Moneyball", "The Big Short", "Vice", "Darkest Hour", "The Theory of Everything",
-        "The Imitation Game", "A Beautiful Mind", "Good Will Hunting", "Dead Poets Society", "Rain Man", "One Flew Over the Cuckoo's Nest", "The Deer Hunter", "Apocalypse Now", "Platoon", "Full Metal Jacket",
-        "Casablanca", "Gone with the Wind", "Lawrence of Arabia", "Ben-Hur", "The Bridge on the River Kwai", "On the Waterfront", "Rebel Without a Cause", "East of Eden", "A Streetcar Named Desire", "Sunset Boulevard",
-        "Citizen Kane", "The Third Man", "Raging Bull", "Taxi Driver", "There Will Be Blood"
-    ];
-    dramFilmler.forEach((title, idx) => {
-        FILMLER.push({
-            id: filmId++, title: title, category: "Dram",
-            poster: `https://image.tmdb.org/t/p/w500/${22 + idx % 100}/300/450`,
-            duration: `${2 + (idx % 4)}s ${10 + (idx * 3) % 59}dk`,
-            imdb: (8.5 + (idx % 15) / 10).toFixed(1)
-        });
-    });
-
-    // 4. KOMEDİ (50 film)
-    const komediFilmler = [
-        "The Hangover", "Superbad", "Bridesmaids", "The 40 Year Old Virgin", "Knocked Up", "Step Brothers", "Talladega Nights", "Anchorman", "Zoolander", "Dodgeball",
-        "Wedding Crashers", "Old School", "Road Trip", "EuroTrip", "American Pie", "Animal House", "Caddyshack", "Groundhog Day", "Ghostbusters", "The Big Lebowski",
-        "Ferris Bueller's Day Off", "The Breakfast Club", "Sixteen Candles", "Pretty in Pink", "Say Anything", "Clueless", "Mean Girls", "Legally Blonde", "The Devil Wears Prada", "27 Dresses",
-        "Crazy Stupid Love", "The Other Guys", "21 Jump Street", "22 Jump Street", "Neighbors", "This Is the End", "The World's End", "Shaun of the Dead", "Hot Fuzz", "Paul",
-        "Bridesmaids", "Trainwreck", "Spy", "The Heat", "Tropic Thunder", "Zombieland", "The Nice Guys", "Kiss Kiss Bang Bang", "Game Night", "Blockers"
-    ];
-    komediFilmler.forEach((title, idx) => {
-        FILMLER.push({
-            id: filmId++, title: title, category: "Komedi",
-            poster: `https://image.tmdb.org/t/p/w500/${35 + idx % 100}/300/450`,
-            duration: `${1 + (idx % 2)}s ${20 + (idx * 4) % 59}dk`,
-            imdb: (6.5 + (idx % 25) / 10).toFixed(1)
-        });
-    });
-
-    // 5. BİLİM KURGU (50 film)
-    const bilimKurguFilmler = [
-        "Interstellar", "Inception", "The Matrix", "Blade Runner 2049", "Arrival", "Dune", "2001 A Space Odyssey", "Blade Runner", "Alien", "Aliens",
-        "Terminator 2", "The Terminator", "Predestination", "Looper", "Edge of Tomorrow", "Source Code", "Moon", "Gravity", "The Martian", "Contact",
-        "Children of Men", "District 9", "Elysium", "Chappie", "Ex Machina", "Her", "Minority Report", "Total Recall", "RoboCop", "Starship Troopers",
-        "The Fifth Element", "Guardians of the Galaxy", "Star Wars A New Hope", "Star Wars Empire Strikes Back", "Star Wars Return of the Jedi", "Star Wars Force Awakens", "Rogue One", "Avatar", "Avatar Way of Water", "Ready Player One",
-        "Pacific Rim", "Godzilla Minus One", "The Creator", "Prey", "Nope", "Tenet", "Dunkirk", "First Man", "Ad Astra", "Sunshine"
-    ];
-    bilimKurguFilmler.forEach((title, idx) => {
-        FILMLER.push({
-            id: filmId++, title: title, category: "Bilim Kurgu",
-            poster: `https://image.tmdb.org/t/p/w500/${45 + idx % 100}/300/450`,
-            duration: `${2 + (idx % 3)}s ${15 + (idx * 6) % 59}dk`,
-            imdb: (7.5 + (idx % 20) / 10).toFixed(1)
-        });
-    });
-
-    // 6. ROMANTİK (50 film)
-    const romantikFilmler = [
-        "Titanic", "The Notebook", "A Walk to Remember", "Dear John", "The Last Song", "Safe Haven", "The Lucky One", "Message in a Bottle", "Nights in Rodanthe", "The Choice",
-        "P.S. I Love You", "Love Actually", "Notting Hill", "Four Weddings and a Funeral", "Bridget Jones's Diary", "10 Things I Hate About You", "She's All That", "Never Been Kissed", "The Wedding Singer", "50 First Dates",
-        "Crazy Rich Asians", "To All the Boys I've Loved Before", "The Kissing Booth", "After", "The Fault in Our Stars", "Me Before You", "Five Feet Apart", "Midnight Sun", "The Best of Me", "The Longest Ride",
-        "La La Land", "Silver Linings Playbook", "Crazy Stupid Love", "The Proposal", "27 Dresses", "Made of Honor", "The Ugly Truth", "How to Lose a Guy in 10 Days", "What Happens in Vegas", "The Back-up Plan",
-        "When Harry Met Sally", "Sleepless in Seattle", "You've Got Mail", "While You Were Sleeping", "Pretty Woman", "Runaway Bride", "Maid in Manhattan", "Mona Lisa Smile", "The Holiday", "Something's Gotta Give"
-    ];
-    romantikFilmler.forEach((title, idx) => {
-        FILMLER.push({
-            id: filmId++, title: title, category: "Romantik",
-            poster: `https://image.tmdb.org/t/p/w500/${55 + idx % 100}/300/450`,
-            duration: `${1 + (idx % 2)}s ${35 + (idx * 2) % 59}dk`,
-            imdb: (6.0 + (idx % 30) / 10).toFixed(1)
-        });
-    });
-
-    // 7. GERİLİM (50 film)
-    const gerilimFilmler = [
-        "Se7en", "Fight Club", "Gone Girl", "The Girl with the Dragon Tattoo", "Zodiac", "Prisoners", "Nightcrawler", "No Country for Old Men", "There Will Be Blood", "The Silence of the Lambs",
-        "Shutter Island", "Black Swan", "The Prestige", "Memento", "The Machinist", "American Psycho", "Mulholland Drive", "Lost Highway", "Blue Velvet", "Wild at Heart",
-        "Oldboy", "Memories of Murder", "The Chaser", "I Saw the Devil", "The Wailing", "Parasite", "The Handmaiden", "Decision to Leave", "Burning", "Mother",
-        "The Usual Suspects", "L.A. Confidential", "Mystic River", "Gone Baby Gone", "The Town", "Heat", "Collateral", "Insomnia", "The Game", "Panic Room",
-        "The Others", "The Orphanage", "The Devil's Backbone", "Crimson Peak", "Rebecca", "Suspiria", "Deep Red", "Tenebrae", "Phenomena", "Opera"
-    ];
-    gerilimFilmler.forEach((title, idx) => {
-        FILMLER.push({
-            id: filmId++, title: title, category: "Gerilim",
-            poster: `https://image.tmdb.org/t/p/w500/${65 + idx % 100}/300/450`,
-            duration: `${1 + (idx % 3)}s ${40 + (idx * 3) % 59}dk`,
-            imdb: (7.5 + (idx % 20) / 10).toFixed(1)
-        });
-    });
-
-    // 8. SUÇ (50 film)
-    const sucFilmler = [
-        "The Godfather", "The Godfather Part II", "Goodfellas", "Casino", "The Irishman", "Scarface", "Carlito's Way", "Donnie Brasco", "The Departed", "Heat",
-        "Pulp Fiction", "Reservoir Dogs", "Kill Bill", "Jackie Brown", "Inglourious Basterds", "Django Unchained", "The Hateful Eight", "Once Upon a Time in Hollywood", "The Wolf of Wall Street", "Catch Me If You Can",
-        "The Usual Suspects", "L.A. Confidential", "Mystic River", "Gone Baby Gone", "The Town", "The Boondock Saints", "Layer Cake", "Lock Stock and Two Smoking Barrels", "Snatch", "RocknRolla",
-        "A Prophet", "Mesrine", "Gomorrah", "City of God", "Elite Squad", "The Secret in Their Eyes", "Nine Queens", "The Aura", "Chinese Takeaway", "Wild Tales",
-        "Eastern Promises", "A History of Violence", "Road to Perdition", "Miller's Crossing", "Blood Simple", "Fargo", "No Country for Old Men", "Hell or High Water", "Wind River", "Sicario"
-    ];
-    sucFilmler.forEach((title, idx) => {
-        FILMLER.push({
-            id: filmId++, title: title, category: "Suç",
-            poster: `https://image.tmdb.org/t/p/w500/${75 + idx % 100}/300/450`,
-            duration: `${2 + (idx % 3)}s ${25 + (idx * 4) % 59}dk`,
-            imdb: (7.8 + (idx % 17) / 10).toFixed(1)
-        });
-    });
-
-    // 9. ANİMASYON (50 film)
-    const animasyonFilmler = [
-        "Spirited Away", "Princess Mononoke", "Howl's Moving Castle", "My Neighbor Totoro", "Kiki's Delivery Service", "Castle in the Sky", "Nausicaa", "Porco Rosso", "The Wind Rises", "Grave of the Fireflies",
-        "Your Name", "Weathering With You", "A Silent Voice", "The Boy and the Beast", "Wolf Children", "Summer Wars", "The Girl Who Leapt Through Time", "Mirai", "Promare", "Redline",
-        "Toy Story", "Finding Nemo", "The Incredibles", "Up", "Wall-E", "Ratatouille", "Coco", "Soul", "Inside Out", "Monsters Inc",
-        "Shrek", "How to Train Your Dragon", "Kung Fu Panda", "Madagascar", "Despicable Me", "Minions", "The Lego Movie", "Spider-Man Into the Spider-Verse", "Spider-Man Across the Spider-Verse", "The Mitchells vs the Machines",
-        "Frozen", "Moana", "Zootopia", "Big Hero 6", "Tangled", "The Princess and the Frog", "Beauty and the Beast", "The Lion King", "Aladdin", "The Little Mermaid"
-    ];
-    animasyonFilmler.forEach((title, idx) => {
-        FILMLER.push({
-            id: filmId++, title: title, category: "Animasyon",
-            poster: `https://image.tmdb.org/t/p/w500/${85 + idx % 100}/300/450`,
-            duration: `${1 + (idx % 2)}s ${30 + (idx * 5) % 59}dk`,
-            imdb: (7.5 + (idx % 20) / 10).toFixed(1)
-        });
-    });
-
-    // Toplam film sayısını hesapla
-    console.log(`Toplam film sayısı: ${FILMLER.length}`);
 
     let currentCategory = "Tümü";
     let watchedIds = JSON.parse(localStorage.getItem("watched_film_ids")) || [];
+    let currentFilmId = null;
 
     function saveWatched(id) {
         if(!watchedIds.includes(id)) {
             watchedIds.push(id);
             localStorage.setItem("watched_film_ids", JSON.stringify(watchedIds));
+            renderFilms();
+            renderCategories();
+            if(currentFilmId === id) {
+                document.getElementById("modalWatchBtn").innerHTML = '<i class="fas fa-check-circle"></i> İZLENDİ';
+                document.getElementById("modalWatchBtn").classList.add("watched-modal");
+            }
         }
     }
 
@@ -384,14 +506,24 @@
     }
 
     function renderCategories() {
-        const categories = ["Tümü", "Aksiyon", "Korku", "Dram", "Komedi", "Bilim Kurgu", "Romantik", "Gerilim", "Suç", "Animasyon"];
+        const categories = ["Tümü", "Aksiyon", "Dram", "Bilim Kurgu", "Suç", "Korku", "Animasyon", "Macera"];
         const container = document.getElementById("categoryContainer");
         container.innerHTML = "";
         categories.forEach(cat => {
             const btn = document.createElement("button");
-            btn.innerText = cat;
-            btn.classList.add("cat-btn");
+            btn.className = "cat-btn";
             if(currentCategory === cat) btn.classList.add("active");
+            
+            let icon = "";
+            if(cat === "Tümü") icon = '<i class="fas fa-border-all"></i>';
+            else if(cat === "Aksiyon") icon = '<i class="fas fa-fist-raised"></i>';
+            else if(cat === "Dram") icon = '<i class="fas fa-mask"></i>';
+            else if(cat === "Korku") icon = '<i class="fas fa-ghost"></i>';
+            else if(cat === "Bilim Kurgu") icon = '<i class="fas fa-rocket"></i>';
+            else if(cat === "Animasyon") icon = '<i class="fas fa-dragon"></i>';
+            else icon = '<i class="fas fa-tag"></i>';
+            
+            btn.innerHTML = `${icon} ${cat}`;
             btn.addEventListener("click", () => {
                 currentCategory = cat;
                 renderCategories();
@@ -401,16 +533,44 @@
         });
     }
 
+    function openModal(film) {
+        currentFilmId = film.id;
+        document.getElementById("modalPoster").src = film.poster;
+        document.getElementById("modalTitle").innerHTML = film.title;
+        document.getElementById("modalImdb").innerHTML = `<i class="fab fa-imdb"></i> ${film.imdb}`;
+        document.getElementById("modalYear").innerHTML = `<i class="far fa-calendar-alt"></i> ${film.year}`;
+        document.getElementById("modalDuration").innerHTML = `<i class="far fa-clock"></i> ${film.duration}`;
+        document.getElementById("modalCategory").innerHTML = `<i class="fas fa-tag"></i> ${film.category}`;
+        document.getElementById("modalPlot").innerHTML = film.plot;
+        
+        const watchBtn = document.getElementById("modalWatchBtn");
+        if(isWatched(film.id)) {
+            watchBtn.innerHTML = '<i class="fas fa-check-circle"></i> İZLENDİ';
+            watchBtn.classList.add("watched-modal");
+        } else {
+            watchBtn.innerHTML = '<i class="fas fa-eye"></i> İZLEDİM';
+            watchBtn.classList.remove("watched-modal");
+        }
+        
+        document.getElementById("modal").style.display = "flex";
+    }
+
+    function closeModal() {
+        document.getElementById("modal").style.display = "none";
+        currentFilmId = null;
+    }
+
     function renderFilms() {
         const grid = document.getElementById("filmGrid");
         const films = getFilteredFilms();
         const stats = document.getElementById("stats");
-        stats.innerHTML = `📊 Toplam ${films.length} film gösteriliyor (İzlediklerin çıkarıldı)`;
+        stats.innerHTML = `<i class="fas fa-film"></i> Toplam ${films.length} film gösteriliyor <i class="fas fa-eye-slash"></i> İzlediklerin çıkarıldı`;
         
         if(films.length === 0) {
-            grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:3rem;">🎉 Tüm filmleri izledin! Yeni filmler ekleniyor...</div>`;
+            grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:3rem;"><i class="fas fa-ticket-alt" style="font-size: 3rem; color: #f5c518;"></i><p style="margin-top: 1rem;">🎉 Tüm filmleri izledin! Yeni filmler ekleniyor...</p></div>`;
             return;
         }
+        
         grid.innerHTML = "";
         films.forEach(film => {
             const card = document.createElement("div");
@@ -420,11 +580,20 @@
                 <img class="poster" src="${film.poster}" alt="${film.title}" loading="lazy" onerror="this.src='https://image.tmdb.org/t/p/w500/8cdWjvZQUxUrmHMPOju9Ftv7Z8d.jpg'">
                 <div class="info">
                     <div class="title">${film.title}</div>
-                    <div class="imdb">⭐ ${film.imdb}</div>
-                    <div class="duration">⏱️ ${film.duration}</div>
-                    <button class="watched-btn ${isWatchedFilm ? 'watched' : ''}" data-id="${film.id}">${isWatchedFilm ? "✓ İZLENDİ" : "📌 İZLEDİM"}</button>
+                    <div class="imdb"><i class="fab fa-imdb"></i> ${film.imdb}</div>
+                    <div class="duration"><i class="far fa-clock"></i> ${film.duration}</div>
+                    <button class="watched-btn ${isWatchedFilm ? 'watched' : ''}" data-id="${film.id}">
+                        ${isWatchedFilm ? '<i class="fas fa-check-circle"></i> İZLENDİ' : '<i class="fas fa-eye"></i> İZLEDİM'}
+                    </button>
                 </div>
             `;
+            
+            // Kartın kendisine tıklayınca detay aç
+            card.addEventListener("click", (e) => {
+                if(e.target.classList.contains("watched-btn")) return;
+                openModal(film);
+            });
+            
             const btn = card.querySelector(".watched-btn");
             if(!isWatchedFilm) {
                 btn.addEventListener("click", (e) => {
@@ -438,6 +607,23 @@
             grid.appendChild(card);
         });
     }
+
+    // Modal dışına tıklayınca kapat
+    window.onclick = function(event) {
+        const modal = document.getElementById("modal");
+        if (event.target === modal) {
+            closeModal();
+        }
+    }
+
+    // Modal içindeki izledim butonu
+    document.getElementById("modalWatchBtn").addEventListener("click", () => {
+        if(currentFilmId && !isWatched(currentFilmId)) {
+            saveWatched(currentFilmId);
+            renderFilms();
+            renderCategories();
+        }
+    });
 
     renderCategories();
     renderFilms();

@@ -2,8 +2,9 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Diziler - IMDB En Yüksek Puanlılar | Abican</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -12,45 +13,49 @@
         }
 
         body {
-            font-family: 'Segoe UI', 'Inter', system-ui, sans-serif;
-            background: linear-gradient(135deg, #0b1120, #030712);
+            font-family: 'Poppins', 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #0a0f1e 0%, #030712 100%);
             color: #f1f5f9;
             min-height: 100vh;
         }
 
         .header {
-            background: linear-gradient(112deg, rgba(15, 25, 45, 0.95), rgba(0, 0, 0, 0.85));
-            backdrop-filter: blur(18px);
-            padding: 1.5rem 2rem;
+            background: rgba(15, 25, 45, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 1rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
             gap: 1rem;
-            border-bottom: 2px solid #f5c518;
+            border-bottom: 1px solid rgba(245, 197, 24, 0.3);
             position: sticky;
             top: 0;
             z-index: 100;
         }
 
-        .logo {
-            font-size: 1.5rem;
-            font-weight: bold;
+        .logo h1 {
+            font-size: 1.3rem;
             background: linear-gradient(135deg, #f5c518, #f97316);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
         }
 
+        .logo i {
+            color: #f5c518;
+            margin-right: 8px;
+        }
+
         .back-btn {
-            background: #1e293b;
-            border: none;
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(245, 197, 24, 0.3);
             padding: 0.5rem 1.2rem;
             border-radius: 40px;
             color: #f5c518;
             cursor: pointer;
             font-weight: 600;
-            transition: 0.2s;
+            transition: all 0.2s;
         }
 
         .back-btn:hover {
@@ -62,114 +67,236 @@
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 0.7rem;
-            margin: 1.8rem 1rem;
-            max-height: 120px;
-            overflow-y: auto;
-            padding: 0.5rem;
+            gap: 0.6rem;
+            margin: 1.5rem 1rem;
         }
 
         .cat-btn {
-            background: #1e293b;
-            border: none;
-            padding: 0.6rem 1.3rem;
-            border-radius: 60px;
-            color: #e2e8f0;
-            font-weight: 600;
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
+            color: #cbd5e1;
+            font-weight: 500;
             cursor: pointer;
-            transition: 0.2s;
-            font-size: 0.85rem;
-            white-space: nowrap;
+            transition: all 0.2s;
+            font-size: 0.8rem;
+        }
+
+        .cat-btn i {
+            margin-right: 6px;
         }
 
         .cat-btn.active {
             background: #f5c518;
-            color: #0a0c15;
-            box-shadow: 0 0 10px #f5c518;
+            color: #0f172a;
+            border-color: #f5c518;
         }
 
         .dizi-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
-            gap: 1.8rem;
-            padding: 1rem 2rem 3rem;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 1.5rem;
+            padding: 1rem 1.5rem 3rem;
             max-width: 1400px;
             margin: 0 auto;
         }
 
         .dizi-card {
-            background: rgba(17, 24, 39, 0.75);
-            backdrop-filter: blur(6px);
-            border-radius: 28px;
+            background: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
             overflow: hidden;
-            border: 1px solid rgba(245, 197, 24, 0.2);
-            transition: all 0.25s;
+            border: 1px solid rgba(245, 197, 24, 0.15);
+            transition: all 0.3s ease;
+            cursor: pointer;
         }
 
         .dizi-card:hover {
-            transform: translateY(-7px);
+            transform: translateY(-6px);
             border-color: #f5c518;
-            box-shadow: 0 20px 28px -12px black;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
         }
 
         .poster {
             width: 100%;
             height: 300px;
             object-fit: cover;
-            background: #0f172a;
+            background: linear-gradient(135deg, #1e293b, #0f172a);
         }
 
         .info {
-            padding: 1rem;
+            padding: 0.9rem;
         }
 
         .title {
-            font-weight: 700;
-            font-size: 0.95rem;
+            font-weight: 600;
+            font-size: 0.9rem;
             margin-bottom: 0.3rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .imdb {
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
             background: #f5c518;
             color: #000;
             font-weight: bold;
-            padding: 0.15rem 0.7rem;
+            padding: 0.2rem 0.6rem;
             border-radius: 20px;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             margin: 0.5rem 0;
         }
 
         .detail {
-            font-size: 0.75rem;
-            color: #9ca3af;
+            font-size: 0.7rem;
+            color: #94a3b8;
             margin: 6px 0;
         }
 
         .watched-btn {
-            background: #2d3a4e;
+            background: rgba(45, 58, 78, 0.8);
             border: none;
             color: #f5c518;
-            padding: 0.45rem;
-            border-radius: 40px;
+            padding: 0.4rem;
+            border-radius: 30px;
             font-size: 0.7rem;
-            font-weight: bold;
-            margin-top: 0.7rem;
+            font-weight: 600;
+            margin-top: 0.6rem;
             width: 100%;
             cursor: pointer;
-            transition: 0.2s;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
         }
 
         .watched-btn.watched {
             background: #10b981;
             color: white;
             cursor: default;
-            opacity: 0.7;
+            opacity: 0.8;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            border-radius: 30px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 85vh;
+            overflow-y: auto;
+            border: 1px solid rgba(245, 197, 24, 0.3);
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            position: relative;
+        }
+
+        .modal-poster {
+            width: 100%;
+            height: 350px;
+            object-fit: cover;
+            border-radius: 30px 30px 0 0;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(0, 0, 0, 0.6);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        .modal-close:hover {
+            background: #f97316;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-meta {
+            display: flex;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+            margin: 1rem 0;
+        }
+
+        .modal-imdb {
+            background: #f5c518;
+            color: #000;
+            padding: 0.2rem 0.8rem;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .modal-year, .modal-seasons {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.2rem 0.8rem;
+            border-radius: 20px;
+        }
+
+        .modal-plot {
+            margin: 1rem 0;
+            line-height: 1.6;
+            color: #cbd5e1;
+        }
+
+        .modal-plot h4 {
+            color: #f5c518;
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-watch-btn {
+            width: 100%;
+            padding: 0.8rem;
+            background: #f5c518;
+            border: none;
+            border-radius: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 1rem;
         }
 
         .footer {
             text-align: center;
-            padding: 2rem;
+            padding: 1.5rem;
             font-size: 0.7rem;
             color: #475569;
         }
@@ -185,137 +312,120 @@
 <body>
 
 <div class="header">
-    <div class="logo">📺 ABICAN DİZİLER | IMDB PUANLARI</div>
-    <button class="back-btn" onclick="window.location.href='index.html'">← Ana Menüye Dön</button>
+    <div class="logo">
+        <h1><i class="fas fa-tv"></i> ABICAN DİZİLER</h1>
+    </div>
+    <button class="back-btn" onclick="window.location.href='index.html'"><i class="fas fa-arrow-left"></i> Ana Menü</button>
 </div>
 
 <div class="category-tabs" id="categoryContainer"></div>
 <div class="stats" id="stats"></div>
 <div class="dizi-grid" id="diziGrid"></div>
-<div class="footer">⭐ IMDB puanlarına göre sıralanmış en iyi diziler • İzlediklerin asla tekrar çıkmaz</div>
+<div class="footer">
+    <i class="fas fa-star" style="color: #f5c518;"></i> IMDB puanları güncel • 
+    <i class="fas fa-check-circle" style="color: #10b981;"></i> İzlediklerin kaybolur •
+    <i class="fas fa-info-circle"></i> Diziye tıkla detayları gör
+</div>
+
+<div id="modal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <img id="modalPoster" class="modal-poster" src="" alt="">
+            <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body">
+            <h2 class="modal-title" id="modalTitle"></h2>
+            <div class="modal-meta">
+                <span class="modal-imdb" id="modalImdb"><i class="fab fa-imdb"></i> </span>
+                <span class="modal-year" id="modalYear"><i class="far fa-calendar-alt"></i> </span>
+                <span class="modal-seasons" id="modalSeasons"><i class="fas fa-layer-group"></i> </span>
+            </div>
+            <div class="modal-plot">
+                <h4><i class="fas fa-align-left"></i> Konusu</h4>
+                <p id="modalPlot"></p>
+            </div>
+            <button class="modal-watch-btn" id="modalWatchBtn"><i class="fas fa-eye"></i> İZLEDİM</button>
+        </div>
+    </div>
+</div>
 
 <script>
-    const DIZILER = [];
-    let diziId = 1;
-
-    // SUÇ (50 dizi)
-    const sucDiziler = [
-        "Breaking Bad", "Better Call Saul", "The Sopranos", "The Wire", "Ozark", "Narcos", "Narcos Mexico", "Peaky Blinders", "Boardwalk Empire", "Sons of Anarchy",
-        "Mayans MC", "The Shield", "Justified", "Fargo", "Mindhunter", "Dexter", "Dexter New Blood", "You", "Lupin", "Money Heist",
-        "Berlin", "Gomorrah", "Suburra", "ZeroZeroZero", "McMafia", "Power", "Power Book Ghost", "Power Book Force", "BMF", "Snowfall",
-        "Top Boy", "Gangs of London", "Kin", "Love/Hate", "Underbelly", "Animal Kingdom", "Southland", "The Chicago Code", "The Unit", "SEAL Team",
-        "The Blacklist", "White Collar", "Suits", "Billions", "Industry", "Succession", "Yellowstone", "1923", "1883", "Lawmen Bass Reeves"
+    const DIZILER = [
+        { 
+            id: 1, title: "Breaking Bad", category: "Suç", 
+            poster: "https://image.tmdb.org/t/p/w500/ggFHVNu6YYI5L9pCfOacjizRGt.jpg", 
+            seasons: "5 Sezon", episodeMins: "47 dk", imdb: "9.5", year: "2008",
+            plot: "Lise kimya öğretmeni Walter White, akciğer kanseri teşhisi alınca ailesine maddi bir gelecek bırakmak için uyuşturucu üretmeye başlar. Eski öğrencisi Jesse Pinkman ile birlikte suç dünyasının en büyük isimlerinden biri olur."
+        },
+        { 
+            id: 2, title: "Game of Thrones", category: "Fantastik", 
+            poster: "https://image.tmdb.org/t/p/w500/7WUHnWGx5jj145A2HM6M4SjF4dB.jpg", 
+            seasons: "8 Sezon", episodeMins: "55 dk", imdb: "9.2", year: "2011",
+            plot: "Taht Oyunları, Westeros kıtasındaki yedi krallık için yapılan iktidar savaşını anlatır. Demir Taht'ı ele geçirmek isteyen soylu aileler, entrikalar, savaşlar ve ejderhalarla dolu bir mücadeleye girişir."
+        },
+        { 
+            id: 3, title: "Stranger Things", category: "Bilim Kurgu", 
+            poster: "https://image.tmdb.org/t/p/w500/49WJfeNqCm1ZbKqHj5PasUzXHnZ.jpg", 
+            seasons: "4 Sezon", episodeMins: "51 dk", imdb: "8.7", year: "2016",
+            plot: "1980'lerin küçük bir kasabasında, bir çocuk gizemli bir şekilde kaybolur. Arkadaşları, ailesi ve kasabanın şerifi, paralel bir evren olan Tersyüz'ün sırlarını ortaya çıkarmaya çalışır."
+        },
+        { 
+            id: 4, title: "The Sopranos", category: "Suç", 
+            poster: "https://image.tmdb.org/t/p/w500/rLbbrYkU2VcG8Vdn0Sgso0E6TWZ.jpg", 
+            seasons: "6 Sezon", episodeMins: "55 dk", imdb: "9.2", year: "1999",
+            plot: "New Jersey mafya lideri Tony Soprano, iş ve aile hayatını dengelemeye çalışırken psikolojik sorunlar yaşar. Bir psikiyatriste gitmeye başlayan Tony, suç dünyasının zorluklarıyla başa çıkmaya çalışır."
+        },
+        { 
+            id: 5, title: "The Wire", category: "Suç", 
+            poster: "https://image.tmdb.org/t/p/w500/4mx8jXtzwMpePzkPRiPHVsOTVCu.jpg", 
+            seasons: "5 Sezon", episodeMins: "59 dk", imdb: "9.3", year: "2002",
+            plot: "Baltimore şehrinin uyuşturucu ticaretini, liman işçilerini, belediye politikalarını ve eğitim sistemini mercek altına alan dizi, her sezon farklı bir kurumu odağına alır."
+        },
+        { 
+            id: 6, title: "Better Call Saul", category: "Suç", 
+            poster: "https://image.tmdb.org/t/p/w500/fC2HDm5t0kHl7McTmNlSr30D8i8.jpg", 
+            seasons: "6 Sezon", episodeMins: "52 dk", imdb: "9.0", year: "2015",
+            plot: "Breaking Bad'in sevilen avukatı Saul Goodman'ın, Jimmy McGill olduğu günlere uzanan hikayesi. İyi niyetli bir avukatken yavaş yavaş suç dünyasının içine çekilen Jimmy'nin dönüşümü anlatılır."
+        },
+        { 
+            id: 7, title: "Sherlock", category: "Gizem", 
+            poster: "https://image.tmdb.org/t/p/w500/7WTsnHkbA0FaG6R9twfFde4IqR8.jpg", 
+            seasons: "4 Sezon", episodeMins: "88 dk", imdb: "9.1", year: "2010",
+            plot: "Modern Londra'da geçen dizi, ünlü dedektif Sherlock Holmes ve arkadaşı Dr. John Watson'ın çözdüğü karmaşık vakaları konu alır. Sherlock'un dehası ve sosyal beceriksizliği her bölümde izleyiciyi büyüler."
+        },
+        { 
+            id: 8, title: "Friends", category: "Komedi", 
+            poster: "https://image.tmdb.org/t/p/w500/f496cm9enuEsZkSPzCwnTESEK5s.jpg", 
+            seasons: "10 Sezon", episodeMins: "22 dk", imdb: "8.9", year: "1994",
+            plot: "New York'ta yaşayan altı arkadaşın hayatları, aşkları ve işleri etrafında dönen komedi dizisi. Monica, Rachel, Phoebe, Chandler, Joey ve Ross'un birbirleriyle olan ilişkileri eğlenceli bir dille anlatılır."
+        },
+        { 
+            id: 9, title: "The Office US", category: "Komedi", 
+            poster: "https://image.tmdb.org/t/p/w500/qWnJxZirhqB2k0rMfmpL76cjObJ.jpg", 
+            seasons: "9 Sezon", episodeMins: "22 dk", imdb: "9.0", year: "2005",
+            plot: "Dunder Mifflin kağıt şirketinin çalışanlarının günlük hayatlarını belgesel formatında anlatan dizi, bölge müdürü Michael Scott'ın garip yönetim tarzıyla komik olaylara sahne olur."
+        },
+        { 
+            id: 10, title: "Black Mirror", category: "Bilim Kurgu", 
+            poster: "https://image.tmdb.org/t/p/w500/5UaYsGZOFhjFDwQh6GuLjjA4Wsu.jpg", 
+            seasons: "6 Sezon", episodeMins: "60 dk", imdb: "8.7", year: "2011",
+            plot: "Teknolojinin karanlık yüzünü ve insan doğasını sorgulayan antoloji dizisi. Her bölüm bağımsız bir hikaye anlatır ve izleyiciyi teknolojinin olası tehlikeleri hakkında düşündürür."
+        }
     ];
-    sucDiziler.forEach((title, idx) => {
-        DIZILER.push({
-            id: diziId++, title: title, category: "Suç",
-            poster: `https://image.tmdb.org/t/p/w500/${101 + idx % 100}/300/450`,
-            seasons: `${3 + (idx % 8)} Sezon`,
-            episodeMins: `${45 + (idx % 30)} dk`,
-            imdb: (8.2 + (idx % 18) / 10).toFixed(1)
-        });
-    });
-
-    // DRAM (55 dizi)
-    const dramDiziler = [
-        "The Crown", "The Last of Us", "House of the Dragon", "Succession", "Yellowstone", "1923", "1883", "Ozark", "Better Call Saul", "Breaking Bad",
-        "This Is Us", "Parenthood", "Friday Night Lights", "The O.C.", "One Tree Hill", "Dawson's Creek", "Everwood", "Gilmore Girls", "The Marvelous Mrs Maisel", "The Handmaid's Tale",
-        "Big Little Lies", "Little Fires Everywhere", "Sharp Objects", "The Undoing", "Mare of Easttown", "The Night Of", "The Outsider", "The Sinner", "Unbelievable", "When They See Us",
-        "The Queen's Gambit", "The Morning Show", "The Newsroom", "The West Wing", "Mad Men", "The Americans", "Homeland", "The Bureau", "Spiral", "Bron Broen",
-        "The Killing", "Broadchurch", "Happy Valley", "Line of Duty", "Bodyguard", "The Bodyguard", "The Capture", "Slow Horses", "The Old Man", "Terminal List",
-        "Reacher", "Jack Ryan", "The Recruit", "Night Agent", "The Diplomat"
-    ];
-    dramDiziler.forEach((title, idx) => {
-        DIZILER.push({
-            id: diziId++, title: title, category: "Dram",
-            poster: `https://image.tmdb.org/t/p/w500/${151 + idx % 100}/300/450`,
-            seasons: `${2 + (idx % 7)} Sezon`,
-            episodeMins: `${48 + (idx % 25)} dk`,
-            imdb: (7.8 + (idx % 22) / 10).toFixed(1)
-        });
-    });
-
-    // KOMEDİ (50 dizi)
-    const komediDiziler = [
-        "Friends", "The Office US", "Parks and Recreation", "Brooklyn Nine-Nine", "The Good Place", "How I Met Your Mother", "The Big Bang Theory", "Young Sheldon", "Modern Family", "Schitt's Creek",
-        "Ted Lasso", "Shrinking", "The Afterparty", "Mythic Quest", "The Bear", "Abbott Elementary", "Superstore", "The Mindy Project", "New Girl", "Happy Endings",
-        "Community", "Arrested Development", "It's Always Sunny in Philadelphia", "Curb Your Enthusiasm", "Veep", "Silicon Valley", "Barry", "Atlanta", "Fleabag", "Crashing",
-        "The Marvelous Mrs Maisel", "The Great", "Dickinson", "Our Flag Means Death", "What We Do in the Shadows", "Wellington Paranormal", "Ghosts", "The Other Two", "Search Party", "The Flight Attendant",
-        "Derry Girls", "Sex Education", "Never Have I Ever", "The Sex Lives of College Girls", "Girls", "Insecure", "Ramy", "Mo", "Rutherford Falls", "Reservation Dogs"
-    ];
-    komediDiziler.forEach((title, idx) => {
-        DIZILER.push({
-            id: diziId++, title: title, category: "Komedi",
-            poster: `https://image.tmdb.org/t/p/w500/${201 + idx % 100}/300/450`,
-            seasons: `${3 + (idx % 9)} Sezon`,
-            episodeMins: `${22 + (idx % 20)} dk`,
-            imdb: (7.5 + (idx % 20) / 10).toFixed(1)
-        });
-    });
-
-    // BİLİM KURGU & FANTASTİK (50 dizi)
-    const bilimkurguDiziler = [
-        "Stranger Things", "Black Mirror", "The Mandalorian", "Ahsoka", "Andor", "Obi-Wan Kenobi", "The Book of Boba Fett", "The Bad Batch", "Star Wars Visions", "Tales of the Jedi",
-        "The Witcher", "Blood Origin", "The Rings of Power", "House of the Dragon", "Game of Thrones", "Westworld", "Foundation", "Silo", "Severance", "Dark",
-        "1899", "The OA", "Sense8", "The Umbrella Academy", "The Boys", "Gen V", "Invincible", "Jupiter's Legacy", "Locke & Key", "Shadow and Bone",
-        "His Dark Materials", "The Nevers", "Carnival Row", "The Last of Us", "Fallout", "Halo", "The Expanse", "Battlestar Galactica", "Star Trek Strange New Worlds", "Star Trek Picard",
-        "Star Trek Discovery", "Star Trek Lower Decks", "Doctor Who", "The Orville", "Avenue 5", "Mrs Davis", "Upload", "The Peripheral", "Pantheon", "Scavengers Reign"
-    ];
-    bilimkurguDiziler.forEach((title, idx) => {
-        DIZILER.push({
-            id: diziId++, title: title, category: "Bilim Kurgu",
-            poster: `https://image.tmdb.org/t/p/w500/${251 + idx % 100}/300/450`,
-            seasons: `${2 + (idx % 6)} Sezon`,
-            episodeMins: `${45 + (idx % 35)} dk`,
-            imdb: (7.5 + (idx % 25) / 10).toFixed(1)
-        });
-    });
-
-    // KORKU & GERİLİM (50 dizi)
-    const korkuDiziler = [
-        "The Walking Dead", "Fear the Walking Dead", "The Last of Us", "American Horror Story", "American Horror Stories", "The Haunting of Hill House", "The Haunting of Bly Manor", "Midnight Mass", "The Fall of the House of Usher", "Midnight Club",
-        "Stranger Things", "Yellowjackets", "From", "The Outsider", "The Terror", "Penny Dreadful", "Penny Dreadful City of Angels", "Evil", "Supernatural", "The X-Files",
-        "Buffy the Vampire Slayer", "Angel", "True Blood", "The Vampire Diaries", "The Originals", "Legacies", "Teen Wolf", "Chilling Adventures of Sabrina", "The Chilling Adventures of Sabrina", "Riverdale",
-        "Scream Queens", "Slasher", "Harper's Island", "The Following", "Hannibal", "Dexter", "Dexter New Blood", "You", "The Sinner", "Mindhunter",
-        "The Fall", "The Killing", "Broadchurch", "Mare of Easttown", "Sharp Objects", "Big Little Lies", "Little Fires Everywhere", "The Undoing", "The Night Of", "Unbelievable"
-    ];
-    korkuDiziler.forEach((title, idx) => {
-        DIZILER.push({
-            id: diziId++, title: title, category: "Korku",
-            poster: `https://image.tmdb.org/t/p/w500/${301 + idx % 100}/300/450`,
-            seasons: `${2 + (idx % 8)} Sezon`,
-            episodeMins: `${42 + (idx % 30)} dk`,
-            imdb: (7.0 + (idx % 25) / 10).toFixed(1)
-        });
-    });
-
-    // AKSİYON (50 dizi)
-    const aksiyonDiziler = [
-        "24", "Homeland", "The Americans", "The Bureau", "Spiral", "Bodyguard", "The Bodyguard", "The Capture", "Slow Horses", "The Old Man",
-        "Terminal List", "Reacher", "Jack Ryan", "The Recruit", "Night Agent", "The Diplomat", "SEAL Team", "The Unit", "Chicago PD", "Law & Order SVU",
-        "NCIS", "NCIS Los Angeles", "NCIS New Orleans", "NCIS Hawaii", "FBI", "FBI Most Wanted", "FBI International", "The Rookie", "The Rookie Feds", "911",
-        "911 Lone Star", "Station 19", "Chicago Fire", "Chicago Med", "Grey's Anatomy", "The Good Doctor", "The Resident", "New Amsterdam", "ER", "House MD",
-        "Prison Break", "Lost", "Alias", "Nikita", "La Femme Nikita", "Covert Affairs", "Burn Notice", "White Collar", "Leverage", "Leverage Redemption"
-    ];
-    aksiyonDiziler.forEach((title, idx) => {
-        DIZILER.push({
-            id: diziId++, title: title, category: "Aksiyon",
-            poster: `https://image.tmdb.org/t/p/w500/${351 + idx % 100}/300/450`,
-            seasons: `${4 + (idx % 10)} Sezon`,
-            episodeMins: `${43 + (idx % 30)} dk`,
-            imdb: (7.3 + (idx % 22) / 10).toFixed(1)
-        });
-    });
-
-    console.log(`Toplam dizi sayısı: ${DIZILER.length}`);
 
     let currentCategory = "Tümü";
     let watchedIds = JSON.parse(localStorage.getItem("watched_dizi_ids")) || [];
+    let currentDiziId = null;
 
     function saveWatched(id) {
         if(!watchedIds.includes(id)) {
             watchedIds.push(id);
             localStorage.setItem("watched_dizi_ids", JSON.stringify(watchedIds));
+            renderDiziler();
+            renderCategories();
+            if(currentDiziId === id) {
+                document.getElementById("modalWatchBtn").innerHTML = '<i class="fas fa-check-circle"></i> İZLENDİ';
+            }
         }
     }
 
@@ -334,14 +444,23 @@
     }
 
     function renderCategories() {
-        const categories = ["Tümü", "Suç", "Dram", "Komedi", "Bilim Kurgu", "Korku", "Aksiyon"];
+        const categories = ["Tümü", "Suç", "Fantastik", "Bilim Kurgu", "Komedi", "Gizem"];
         const container = document.getElementById("categoryContainer");
         container.innerHTML = "";
         categories.forEach(cat => {
             const btn = document.createElement("button");
-            btn.innerText = cat;
-            btn.classList.add("cat-btn");
+            btn.className = "cat-btn";
             if(currentCategory === cat) btn.classList.add("active");
+            
+            let icon = "";
+            if(cat === "Tümü") icon = '<i class="fas fa-border-all"></i>';
+            else if(cat === "Suç") icon = '<i class="fas fa-gavel"></i>';
+            else if(cat === "Fantastik") icon = '<i class="fas fa-dragon"></i>';
+            else if(cat === "Bilim Kurgu") icon = '<i class="fas fa-rocket"></i>';
+            else if(cat === "Komedi") icon = '<i class="fas fa-laugh"></i>';
+            else icon = '<i class="fas fa-tag"></i>';
+            
+            btn.innerHTML = `${icon} ${cat}`;
             btn.addEventListener("click", () => {
                 currentCategory = cat;
                 renderCategories();
@@ -351,16 +470,41 @@
         });
     }
 
+    function openModal(dizi) {
+        currentDiziId = dizi.id;
+        document.getElementById("modalPoster").src = dizi.poster;
+        document.getElementById("modalTitle").innerHTML = dizi.title;
+        document.getElementById("modalImdb").innerHTML = `<i class="fab fa-imdb"></i> ${dizi.imdb}`;
+        document.getElementById("modalYear").innerHTML = `<i class="far fa-calendar-alt"></i> ${dizi.year}`;
+        document.getElementById("modalSeasons").innerHTML = `<i class="fas fa-layer-group"></i> ${dizi.seasons}`;
+        document.getElementById("modalPlot").innerHTML = dizi.plot;
+        
+        const watchBtn = document.getElementById("modalWatchBtn");
+        if(isWatched(dizi.id)) {
+            watchBtn.innerHTML = '<i class="fas fa-check-circle"></i> İZLENDİ';
+        } else {
+            watchBtn.innerHTML = '<i class="fas fa-eye"></i> İZLEDİM';
+        }
+        
+        document.getElementById("modal").style.display = "flex";
+    }
+
+    function closeModal() {
+        document.getElementById("modal").style.display = "none";
+        currentDiziId = null;
+    }
+
     function renderDiziler() {
         const grid = document.getElementById("diziGrid");
         const diziler = getFilteredDiziler();
         const stats = document.getElementById("stats");
-        stats.innerHTML = `📊 Toplam ${diziler.length} dizi gösteriliyor (İzlediklerin çıkarıldı)`;
+        stats.innerHTML = `<i class="fas fa-tv"></i> Toplam ${diziler.length} dizi gösteriliyor <i class="fas fa-eye-slash"></i> İzlediklerin çıkarıldı`;
         
         if(diziler.length === 0) {
-            grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:3rem;">🎉 Tüm dizileri izledin! Yeni sezonlar bekleniyor...</div>`;
+            grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:3rem;"><i class="fas fa-ticket-alt" style="font-size: 3rem; color: #f5c518;"></i><p style="margin-top: 1rem;">🎉 Tüm dizileri izledin! Yeni sezonlar bekleniyor...</p></div>`;
             return;
         }
+        
         grid.innerHTML = "";
         diziler.forEach(dizi => {
             const card = document.createElement("div");
@@ -370,11 +514,19 @@
                 <img class="poster" src="${dizi.poster}" alt="${dizi.title}" loading="lazy" onerror="this.src='https://image.tmdb.org/t/p/w500/8cdWjvZQUxUrmHMPOju9Ftv7Z8d.jpg'">
                 <div class="info">
                     <div class="title">${dizi.title}</div>
-                    <div class="imdb">⭐ ${dizi.imdb}</div>
-                    <div class="detail">📺 ${dizi.seasons} • ⏱️ ${dizi.episodeMins}/bölüm</div>
-                    <button class="watched-btn ${isWatchedDizi ? 'watched' : ''}" data-id="${dizi.id}">${isWatchedDizi ? "✓ İZLENDİ" : "📌 İZLEDİM"}</button>
+                    <div class="imdb"><i class="fab fa-imdb"></i> ${dizi.imdb}</div>
+                    <div class="detail"><i class="fas fa-layer-group"></i> ${dizi.seasons} • <i class="far fa-clock"></i> ${dizi.episodeMins}/bölüm</div>
+                    <button class="watched-btn ${isWatchedDizi ? 'watched' : ''}" data-id="${dizi.id}">
+                        ${isWatchedDizi ? '<i class="fas fa-check-circle"></i> İZLENDİ' : '<i class="fas fa-eye"></i> İZLEDİM'}
+                    </button>
                 </div>
             `;
+            
+            card.addEventListener("click", (e) => {
+                if(e.target.classList.contains("watched-btn")) return;
+                openModal(dizi);
+            });
+            
             const btn = card.querySelector(".watched-btn");
             if(!isWatchedDizi) {
                 btn.addEventListener("click", (e) => {
@@ -388,6 +540,21 @@
             grid.appendChild(card);
         });
     }
+
+    window.onclick = function(event) {
+        const modal = document.getElementById("modal");
+        if (event.target === modal) {
+            closeModal();
+        }
+    }
+
+    document.getElementById("modalWatchBtn").addEventListener("click", () => {
+        if(currentDiziId && !isWatched(currentDiziId)) {
+            saveWatched(currentDiziId);
+            renderDiziler();
+            renderCategories();
+        }
+    });
 
     renderCategories();
     renderDiziler();
