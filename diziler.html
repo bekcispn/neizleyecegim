@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Diziler - TMDB En Popüler | Abican</title>
+    <title>Diziler - TMDB En İyi ve Popüler | Abican</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         * {
@@ -63,39 +63,61 @@
             color: #0f172a;
         }
 
+        .sort-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin: 1.5rem 1rem 0.5rem;
+        }
+
+        .sort-btn {
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(245, 197, 24, 0.3);
+            padding: 0.6rem 1.8rem;
+            border-radius: 40px;
+            color: #cbd5e1;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .sort-btn.active {
+            background: #f5c518;
+            color: #0f172a;
+        }
+
         .category-tabs {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
             gap: 0.6rem;
-            margin: 1.5rem 1rem;
+            margin: 1rem 1rem 1.5rem;
         }
 
         .cat-btn {
             background: rgba(30, 41, 59, 0.7);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 0.5rem 1.2rem;
+            padding: 0.4rem 1rem;
             border-radius: 40px;
             color: #cbd5e1;
             font-weight: 500;
             cursor: pointer;
             transition: all 0.2s;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
         }
 
         .cat-btn i {
-            margin-right: 6px;
+            margin-right: 5px;
         }
 
         .cat-btn.active {
             background: #f5c518;
             color: #0f172a;
-            border-color: #f5c518;
         }
 
         .dizi-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
             gap: 1.5rem;
             padding: 1rem 1.5rem 2rem;
             max-width: 1400px;
@@ -120,18 +142,18 @@
 
         .poster {
             width: 100%;
-            height: 300px;
+            height: 280px;
             object-fit: cover;
             background: linear-gradient(135deg, #1e293b, #0f172a);
         }
 
         .info {
-            padding: 0.9rem;
+            padding: 0.8rem;
         }
 
         .title {
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             margin-bottom: 0.3rem;
             white-space: nowrap;
             overflow: hidden;
@@ -145,41 +167,39 @@
             background: #f5c518;
             color: #000;
             font-weight: bold;
-            padding: 0.2rem 0.6rem;
+            padding: 0.15rem 0.5rem;
             border-radius: 20px;
-            font-size: 0.7rem;
-            margin: 0.5rem 0;
+            font-size: 0.65rem;
+            margin: 0.4rem 0;
         }
 
         .year {
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             color: #94a3b8;
-            margin: 6px 0;
         }
 
         .watched-btn {
             background: rgba(45, 58, 78, 0.8);
             border: none;
             color: #f5c518;
-            padding: 0.4rem;
+            padding: 0.35rem;
             border-radius: 30px;
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             font-weight: 600;
-            margin-top: 0.6rem;
+            margin-top: 0.5rem;
             width: 100%;
             cursor: pointer;
             transition: all 0.2s;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
+            gap: 5px;
         }
 
         .watched-btn.watched {
             background: #10b981;
             color: white;
             cursor: default;
-            opacity: 0.8;
         }
 
         .modal {
@@ -245,9 +265,8 @@
         }
 
         .modal-title {
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             font-weight: 700;
-            margin-bottom: 0.5rem;
         }
 
         .modal-meta {
@@ -263,18 +282,21 @@
             padding: 0.2rem 0.8rem;
             border-radius: 20px;
             font-weight: bold;
+            font-size: 0.85rem;
         }
 
         .modal-year, .modal-seasons {
             background: rgba(255, 255, 255, 0.1);
             padding: 0.2rem 0.8rem;
             border-radius: 20px;
+            font-size: 0.85rem;
         }
 
         .modal-plot {
             margin: 1rem 0;
             line-height: 1.6;
             color: #cbd5e1;
+            font-size: 0.9rem;
         }
 
         .modal-plot h4 {
@@ -332,9 +354,14 @@
 
 <div class="header">
     <div class="logo">
-        <h1><i class="fas fa-tv"></i> ABICAN DİZİLER | TMDB</h1>
+        <h1><i class="fas fa-tv"></i> ABICAN DİZİLER</h1>
     </div>
     <button class="back-btn" onclick="window.location.href='index.html'"><i class="fas fa-arrow-left"></i> Ana Menü</button>
+</div>
+
+<div class="sort-tabs">
+    <button class="sort-btn active" data-sort="top_rated"><i class="fas fa-star"></i> En Yüksek Puanlılar</button>
+    <button class="sort-btn" data-sort="popular"><i class="fas fa-fire"></i> Günlük Popüler</button>
 </div>
 
 <div class="category-tabs" id="categoryContainer"></div>
@@ -342,9 +369,8 @@
 <div class="dizi-grid" id="diziGrid"></div>
 <div class="load-more-container" id="loadMoreContainer"></div>
 <div class="footer">
-    <i class="fas fa-star" style="color: #f5c518;"></i> TMDB'den gerçek zamanlı veri • 
-    <i class="fas fa-check-circle" style="color: #10b981;"></i> İzlediklerin kaybolur •
-    <i class="fas fa-info-circle"></i> Diziye tıkla detayları gör
+    <i class="fas fa-star" style="color: #f5c518;"></i> TMDB'den gerçek zamanlı • 
+    <i class="fas fa-check-circle" style="color: #10b981;"></i> İzlediklerin kaybolur
 </div>
 
 <div id="modal" class="modal">
@@ -370,12 +396,12 @@
 </div>
 
 <script>
-    // ============ TMDB API KONFIGÜRASYONU ============
     const TMDB_API_KEY = "b429c973c6c98439cf6e504e7ffe1678";  // ← API KEY'İNİ BURAYA YAZ
     const TMDB_BASE_URL = "https://api.themoviedb.org/3";
     const IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500";
 
-    let currentCategory = "popular";
+    let currentSort = "top_rated";
+    let currentCategory = "all";
     let currentPage = 1;
     let isLoading = false;
     let hasMore = true;
@@ -384,20 +410,18 @@
     let currentShowId = null;
 
     const genreMap = {
-        "popular": null,
+        "all": null,
         "Aksiyon": 10759,
         "Animasyon": 16,
         "Komedi": 35,
         "Suç": 80,
-        "Belgesel": 99,
         "Dram": 18,
         "Aile": 10751,
         "Gizem": 9648,
         "Romantik": 10749,
         "Bilim Kurgu": 10765,
         "Gerilim": 53,
-        "Savaş": 10752,
-        "Batı": 37
+        "Savaş": 10752
     };
 
     function saveWatched(id) {
@@ -415,16 +439,19 @@
         return watchedIds.includes(id);
     }
 
-    async function fetchShows(page = 1) {
+    async function fetchShows(page = 1, append = true) {
         isLoading = true;
         showLoading();
         
-        let url = `${TMDB_BASE_URL}/tv/popular?api_key=${TMDB_API_KEY}&language=tr-TR&page=${page}`;
-        
-        if(currentCategory !== "popular" && genreMap[currentCategory]) {
-            url = `${TMDB_BASE_URL}/discover/tv?api_key=${TMDB_API_KEY}&language=tr-TR&with_genres=${genreMap[currentCategory]}&sort_by=popularity.desc&page=${page}`;
-        } else if(currentCategory !== "popular") {
+        let url;
+        if(currentSort === "top_rated") {
+            url = `${TMDB_BASE_URL}/tv/top_rated?api_key=${TMDB_API_KEY}&language=tr-TR&page=${page}`;
+        } else {
             url = `${TMDB_BASE_URL}/tv/popular?api_key=${TMDB_API_KEY}&language=tr-TR&page=${page}`;
+        }
+        
+        if(currentCategory !== "all" && genreMap[currentCategory]) {
+            url = `${TMDB_BASE_URL}/discover/tv?api_key=${TMDB_API_KEY}&language=tr-TR&with_genres=${genreMap[currentCategory]}&sort_by=${currentSort === "top_rated" ? "vote_average.desc" : "popularity.desc"}&vote_count.gte=50&page=${page}`;
         }
         
         try {
@@ -441,22 +468,26 @@
                             id: show.id,
                             title: show.name,
                             poster: show.poster_path ? `${IMAGE_BASE_URL}${show.poster_path}` : null,
-                            year: show.first_air_date ? show.first_air_date.split('-')[0] : "Bilinmiyor",
+                            year: show.first_air_date ? show.first_air_date.split('-')[0] : "?",
                             imdb: show.vote_average ? show.vote_average.toFixed(1) : "?",
-                            seasons: detailData.number_of_seasons ? `${detailData.number_of_seasons} Sezon` : "Sezon bilinmiyor",
+                            seasons: detailData.number_of_seasons ? `${detailData.number_of_seasons} Sezon` : "?",
                             plot: detailData.overview || "Konu bilgisi bulunamadı.",
-                            category: currentCategory === "popular" ? "Popüler" : currentCategory
+                            category: currentCategory
                         };
                     })
                 );
                 
-                if(page === 1) {
-                    allShows = detailedShows;
+                if(append) {
+                    if(page === 1) {
+                        allShows = detailedShows;
+                    } else {
+                        allShows = [...allShows, ...detailedShows];
+                    }
                 } else {
-                    allShows = [...allShows, ...detailedShows];
+                    allShows = detailedShows;
                 }
                 
-                hasMore = data.page < data.total_pages;
+                hasMore = data.page < data.total_pages && data.page < 20;
                 currentPage = page;
             } else {
                 hasMore = false;
@@ -473,44 +504,40 @@
 
     function showLoading() {
         const container = document.getElementById("loadMoreContainer");
-        container.innerHTML = '<div class="loading-spinner"><i class="fas fa-spinner"></i> Yükleniyor...</div>';
+        container.innerHTML = '<div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> Diziler yükleniyor...</div>';
     }
 
     function hideLoading() {
         const container = document.getElementById("loadMoreContainer");
         if(hasMore && !isLoading) {
-            container.innerHTML = '<button class="load-more-btn" onclick="loadMore()"><i class="fas fa-arrow-down"></i> Daha Fazla Dizi Yükle</button>';
+            container.innerHTML = '<button class="load-more-btn" onclick="loadMore()"><i class="fas fa-arrow-down"></i> Daha Fazla Dizi Yükle (500+ hedefi)</button>';
         } else if(!hasMore) {
-            container.innerHTML = '<p style="color: #475569;"><i class="fas fa-check-circle"></i> Tüm diziler yüklendi!</p>';
+            container.innerHTML = '<p style="color: #475569;"><i class="fas fa-check-circle"></i> 500+ dizi yüklendi! Hepsi bu kadar.</p>';
         } else {
             container.innerHTML = '';
         }
     }
 
     function loadMore() {
-        if(!isLoading && hasMore) {
-            fetchShows(currentPage + 1);
+        if(!isLoading && hasMore && allShows.length < 500) {
+            fetchShows(currentPage + 1, true);
         }
     }
 
     function renderShows() {
         const grid = document.getElementById("diziGrid");
-        const filteredShows = allShows.filter(s => !isWatched(s.id));
+        let filteredShows = allShows.filter(s => !isWatched(s.id));
+        
         const stats = document.getElementById("stats");
+        stats.innerHTML = `<i class="fas fa-tv"></i> Toplam ${filteredShows.length} / ${allShows.length} dizi gösteriliyor <i class="fas fa-eye-slash"></i> İzlediklerin çıkarıldı | Hedef: 500+ dizi`;
         
         if(filteredShows.length === 0 && allShows.length > 0) {
-            stats.innerHTML = `<i class="fas fa-check-circle"></i> Tüm dizileri izledin! Yeni diziler yüklemek için "Daha Fazla" butonuna tıkla.`;
-        } else {
-            stats.innerHTML = `<i class="fas fa-tv"></i> Toplam ${filteredShows.length} dizi gösteriliyor <i class="fas fa-eye-slash"></i> İzlediklerin çıkarıldı`;
-        }
-        
-        if(filteredShows.length === 0 && allShows.length === 0 && !isLoading) {
-            grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:3rem;"><i class="fas fa-ticket-alt" style="font-size: 3rem; color: #f5c518;"></i><p style="margin-top: 1rem;">Diziler yükleniyor veya API anahtarı geçersiz...</p></div>`;
+            grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:3rem;"><i class="fas fa-trophy" style="font-size: 3rem; color: #f5c518;"></i><p style="margin-top: 1rem;">🎉 Tebrikler! Tüm dizileri izledin!</p></div>`;
             return;
         }
         
-        if(filteredShows.length === 0 && allShows.length > 0) {
-            grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:3rem;"><i class="fas fa-trophy" style="font-size: 3rem; color: #f5c518;"></i><p style="margin-top: 1rem;">🎉 Tebrikler! Tüm dizileri izledin! Yeni diziler için "Daha Fazla" butonuna tıkla.</p></div>`;
+        if(allShows.length === 0 && !isLoading) {
+            grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:3rem;"><i class="fas fa-spinner fa-spin" style="font-size: 3rem; color: #f5c518;"></i><p style="margin-top: 1rem;">Diziler yükleniyor...</p></div>`;
             return;
         }
         
@@ -522,7 +549,7 @@
             card.innerHTML = `
                 <img class="poster" src="${show.poster || 'https://via.placeholder.com/300x450?text=Poster+Bulunamadı'}" alt="${show.title}" loading="lazy">
                 <div class="info">
-                    <div class="title">${show.title}</div>
+                    <div class="title">${show.title.length > 25 ? show.title.substring(0,22)+'...' : show.title}</div>
                     <div class="imdb"><i class="fab fa-imdb"></i> ${show.imdb}</div>
                     <div class="year"><i class="far fa-calendar-alt"></i> ${show.year}</div>
                     <button class="watched-btn ${isWatchedShow ? 'watched' : ''}" data-id="${show.id}">
@@ -573,7 +600,7 @@
     }
 
     function renderCategories() {
-        const categories = ["popular", "Aksiyon", "Komedi", "Dram", "Bilim Kurgu", "Suç", "Animasyon", "Gerilim", "Romantik", "Gizem"];
+        const categories = ["all", "Aksiyon", "Komedi", "Dram", "Bilim Kurgu", "Suç", "Animasyon", "Gerilim", "Romantik", "Gizem"];
         const container = document.getElementById("categoryContainer");
         container.innerHTML = "";
         categories.forEach(cat => {
@@ -582,7 +609,7 @@
             if(currentCategory === cat) btn.classList.add("active");
             
             let icon = "";
-            if(cat === "popular") icon = '<i class="fas fa-fire"></i>';
+            if(cat === "all") icon = '<i class="fas fa-border-all"></i>';
             else if(cat === "Aksiyon") icon = '<i class="fas fa-fist-raised"></i>';
             else if(cat === "Dram") icon = '<i class="fas fa-mask"></i>';
             else if(cat === "Komedi") icon = '<i class="fas fa-laugh"></i>';
@@ -590,7 +617,7 @@
             else if(cat === "Animasyon") icon = '<i class="fas fa-dragon"></i>';
             else icon = '<i class="fas fa-tag"></i>';
             
-            const displayName = cat === "popular" ? "🔥 Popüler" : cat;
+            const displayName = cat === "all" ? "Tümü" : cat;
             btn.innerHTML = `${icon} ${displayName}`;
             btn.addEventListener("click", () => {
                 currentCategory = cat;
@@ -598,10 +625,24 @@
                 allShows = [];
                 hasMore = true;
                 renderCategories();
-                fetchShows(1);
+                fetchShows(1, true);
             });
             container.appendChild(btn);
         });
+    }
+
+    function changeSort(sort) {
+        currentSort = sort;
+        currentPage = 1;
+        allShows = [];
+        hasMore = true;
+        
+        document.querySelectorAll(".sort-btn").forEach(btn => {
+            btn.classList.remove("active");
+        });
+        document.querySelector(`.sort-btn[data-sort="${sort}"]`).classList.add("active");
+        
+        fetchShows(1, true);
     }
 
     window.onclick = function(event) {
@@ -617,8 +658,14 @@
         }
     });
 
+    document.querySelectorAll(".sort-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+            changeSort(btn.getAttribute("data-sort"));
+        });
+    });
+
     renderCategories();
-    fetchShows(1);
+    fetchShows(1, true);
 </script>
 </body>
 </html>
