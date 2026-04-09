@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Filmler - IMDB En Yüksek Puanlılar | Abican</title>
+    <title>Filmler - TMDB En Popüler | Abican</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         * {
@@ -47,7 +47,7 @@
             margin-right: 8px;
         }
 
-        .back-btn {
+        .back-btn, .load-more-btn {
             background: rgba(30, 41, 59, 0.8);
             border: 1px solid rgba(245, 197, 24, 0.3);
             padding: 0.5rem 1.2rem;
@@ -58,10 +58,9 @@
             transition: all 0.2s;
         }
 
-        .back-btn:hover {
+        .back-btn:hover, .load-more-btn:hover {
             background: #f5c518;
             color: #0f172a;
-            transform: scale(1.02);
         }
 
         .category-tabs {
@@ -86,7 +85,6 @@
 
         .cat-btn i {
             margin-right: 6px;
-            font-size: 0.7rem;
         }
 
         .cat-btn.active {
@@ -99,7 +97,7 @@
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
             gap: 1.5rem;
-            padding: 1rem 1.5rem 3rem;
+            padding: 1rem 1.5rem 2rem;
             max-width: 1400px;
             margin: 0 auto;
         }
@@ -153,7 +151,7 @@
             margin: 0.5rem 0;
         }
 
-        .duration {
+        .year {
             font-size: 0.7rem;
             color: #94a3b8;
             margin: 6px 0;
@@ -184,7 +182,7 @@
             opacity: 0.8;
         }
 
-        /* Modal/Detay Sayfası */
+        /* Modal */
         .modal {
             display: none;
             position: fixed;
@@ -196,12 +194,6 @@
             z-index: 1000;
             justify-content: center;
             align-items: center;
-            animation: fadeIn 0.3s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
         }
 
         .modal-content {
@@ -243,12 +235,10 @@
             border-radius: 50%;
             font-size: 1.2rem;
             cursor: pointer;
-            transition: all 0.2s;
         }
 
         .modal-close:hover {
             background: #f97316;
-            transform: scale(1.1);
         }
 
         .modal-body {
@@ -263,7 +253,7 @@
 
         .modal-meta {
             display: flex;
-            gap: 1rem;
+            gap: 0.8rem;
             flex-wrap: wrap;
             margin: 1rem 0;
         }
@@ -276,20 +266,8 @@
             font-weight: bold;
         }
 
-        .modal-year {
+        .modal-year, .modal-runtime {
             background: rgba(255, 255, 255, 0.1);
-            padding: 0.2rem 0.8rem;
-            border-radius: 20px;
-        }
-
-        .modal-duration {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 0.2rem 0.8rem;
-            border-radius: 20px;
-        }
-
-        .modal-category {
-            background: rgba(249, 115, 22, 0.3);
             padding: 0.2rem 0.8rem;
             border-radius: 20px;
         }
@@ -314,12 +292,11 @@
             font-weight: bold;
             cursor: pointer;
             margin-top: 1rem;
-            transition: all 0.2s;
         }
 
-        .modal-watch-btn.watched-modal {
-            background: #10b981;
-            color: white;
+        .load-more-container {
+            text-align: center;
+            padding: 1rem 0 2rem;
         }
 
         .footer {
@@ -335,13 +312,28 @@
             color: #f5c518;
             font-size: 0.8rem;
         }
+
+        .loading-spinner {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .loading-spinner i {
+            font-size: 2rem;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
 
 <div class="header">
     <div class="logo">
-        <h1><i class="fas fa-film"></i> ABICAN FİLMLER</h1>
+        <h1><i class="fas fa-film"></i> ABICAN FİLMLER | TMDB</h1>
     </div>
     <button class="back-btn" onclick="window.location.href='index.html'"><i class="fas fa-arrow-left"></i> Ana Menü</button>
 </div>
@@ -349,13 +341,13 @@
 <div class="category-tabs" id="categoryContainer"></div>
 <div class="stats" id="stats"></div>
 <div class="film-grid" id="filmGrid"></div>
+<div class="load-more-container" id="loadMoreContainer"></div>
 <div class="footer">
-    <i class="fas fa-star" style="color: #f5c518;"></i> IMDB puanları güncel • 
+    <i class="fas fa-star" style="color: #f5c518;"></i> TMDB'den gerçek zamanlı veri • 
     <i class="fas fa-check-circle" style="color: #10b981;"></i> İzlediklerin kaybolur •
     <i class="fas fa-info-circle"></i> Filme tıkla detayları gör
 </div>
 
-<!-- Modal -->
 <div id="modal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
@@ -367,8 +359,7 @@
             <div class="modal-meta">
                 <span class="modal-imdb" id="modalImdb"><i class="fab fa-imdb"></i> </span>
                 <span class="modal-year" id="modalYear"><i class="far fa-calendar-alt"></i> </span>
-                <span class="modal-duration" id="modalDuration"><i class="far fa-clock"></i> </span>
-                <span class="modal-category" id="modalCategory"><i class="fas fa-tag"></i> </span>
+                <span class="modal-runtime" id="modalRuntime"><i class="far fa-clock"></i> </span>
             </div>
             <div class="modal-plot">
                 <h4><i class="fas fa-align-left"></i> Konusu</h4>
@@ -380,113 +371,51 @@
 </div>
 
 <script>
-    // FİLMLER - GERÇEK IMDB, YIL, TÜRKÇE KONU
-    const FILMLER = [
-        { 
-            id: 1, title: "The Shawshank Redemption", category: "Dram", 
-            poster: "https://image.tmdb.org/t/p/w500/q6y0Go1tsGEsmtFryDOJo3dEmqu.jpg", 
-            duration: "2s 22dk", imdb: "9.3", year: "1994",
-            plot: "Genç ve başarılı bir bankacı olan Andy Dufresne, karısını ve sevgilisini öldürmekten suçlu bulunarak Shawshank Hapishanesi'ne gönderilir. Masum olmasına rağmen hapishanenin acımasız dünyasında hayatta kalmayı öğrenen Andy, arkadaşı Red ile birlikte umudu asla kaybetmez."
-        },
-        { 
-            id: 2, title: "The Godfather", category: "Suç", 
-            poster: "https://image.tmdb.org/t/p/w500/3bhkrj58Vtu7enYsRolD1fZdja1.jpg", 
-            duration: "2s 55dk", imdb: "9.2", year: "1972",
-            plot: "Mafya babası Don Vito Corleone, bir suikast sonucu ölümcül şekilde yaralanınca ailenin başına en küçük oğlu Michael geçer. Michael, babasının intikamını almak için acımasız bir savaşa girişir."
-        },
-        { 
-            id: 3, title: "The Dark Knight", category: "Aksiyon", 
-            poster: "https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg", 
-            duration: "2s 32dk", imdb: "9.0", year: "2008",
-            plot: "Batman, Gotham şehrini suçtan temizlemek için Joker adlı psikopat bir suçluyla yüzleşir. Joker, şehri kaosa sürükleyerek Batman'in en büyük sınavını vermesine neden olur."
-        },
-        { 
-            id: 4, title: "Pulp Fiction", category: "Suç", 
-            poster: "https://image.tmdb.org/t/p/w500/d5iIlFn5s0ImszYzBPb8JPIfbXD.jpg", 
-            duration: "2s 34dk", imdb: "8.9", year: "1994",
-            plot: "Birbirine bağlı üç farklı hikayede, kiralık katiller, bir boksör ve bir gangsterin karısının Los Angeles'ın yeraltı dünyasında yaşadıkları anlatılır."
-        },
-        { 
-            id: 5, title: "Inception", category: "Bilim Kurgu", 
-            poster: "https://image.tmdb.org/t/p/w500/edv5CZvWj09upOsy2Y6IwDhK8bt.jpg", 
-            duration: "2s 28dk", imdb: "8.8", year: "2010",
-            plot: "Dom Cobb, rüya paylaşım teknolojisi kullanarak bir CEO'nun zihnine bir fikir yerleştirmek için son bir görevi kabul eder. Ancak geçmişindeki sırlar onu tehdit etmektedir."
-        },
-        { 
-            id: 6, title: "Forrest Gump", category: "Dram", 
-            poster: "https://image.tmdb.org/t/p/w500/arw2vcBveWOVZr6pxd9XTd1TdQa.jpg", 
-            duration: "2s 22dk", imdb: "8.8", year: "1994",
-            plot: "Zeka seviyesi düşük olan Forrest Gump, hayatı boyunca tesadüflerle dolu bir yolculuk yapar. Amerikan tarihinin önemli anlarına tanıklık eden Forrest, sevdiği kız Jenny'nin peşinden koşar."
-        },
-        { 
-            id: 7, title: "Fight Club", category: "Dram", 
-            poster: "https://image.tmdb.org/t/p/w500/pB8BM7pdSp6B6Ih7QZ4DrQ3PmJK.jpg", 
-            duration: "2s 19dk", imdb: "8.8", year: "1999",
-            plot: "Uykusuzluk çeken bir ofis çalışanı, sabun satıcısı Tyler Durden ile tanışır ve birlikte yeraltı dövüş kulüpleri kurarlar. Ancak bu kulüp kısa sürede kontrolden çıkar."
-        },
-        { 
-            id: 8, title: "The Matrix", category: "Bilim Kurgu", 
-            poster: "https://image.tmdb.org/t/p/w500/f89U3ADr1oiB1s9GkdPOEpXUk5H.jpg", 
-            duration: "2s 16dk", imdb: "8.7", year: "1999",
-            plot: "Bilgisayar korsanı Neo, yaşadığı dünyanın aslında bir simülasyon olduğunu öğrenir. Gerçek dünyada insanlığı köleleştiren makinelere karşı savaşmak zorundadır."
-        },
-        { 
-            id: 9, title: "Interstellar", category: "Bilim Kurgu", 
-            poster: "https://image.tmdb.org/t/p/w500/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg", 
-            duration: "2s 49dk", imdb: "8.6", year: "2014",
-            plot: "Dünya'nın yaşanamaz hale geldiği bir gelecekte, bir grup astronot insanlık için yeni bir yaşam alanı bulmak amacıyla bir solucan deliğinden geçer."
-        },
-        { 
-            id: 10, title: "Gladiator", category: "Aksiyon", 
-            poster: "https://image.tmdb.org/t/p/w500/ty8TGRuvJLPUmAR1H1nRIsgwvim.jpg", 
-            duration: "2s 35dk", imdb: "8.5", year: "2000",
-            plot: "Roma İmparatoru'nun ihanetine uğrayan General Maximus, ailesini kaybeder ve köle olarak satılır. Arenada bir gladyatör olarak intikam yemini eder."
-        },
-        { 
-            id: 11, title: "The Silence of the Lambs", category: "Korku", 
-            poster: "https://image.tmdb.org/t/p/w500/uS9m8OBkOCA6KUiJSfUar5WZzDp.jpg", 
-            duration: "1s 58dk", imdb: "8.6", year: "1991",
-            plot: "FBI ajanı Clarice Starling, bir seri katili yakalamak için akıl hastanesinde tutulan psikiyatrist ve kanibal Dr. Hannibal Lecter'dan yardım ister."
-        },
-        { 
-            id: 12, title: "The Green Mile", category: "Dram", 
-            poster: "https://image.tmdb.org/t/p/w500/8VG8fDNiy50H4FedGmdSVzyoaMv.jpg", 
-            duration: "3s 09dk", imdb: "8.6", year: "1999",
-            plot: "İdam cezası koğuşunda çalışan bir gardiyan, doğaüstü güçleri olan dev bir mahkumla tanışır ve hayatı değişir."
-        },
-        { 
-            id: 13, title: "Spirited Away", category: "Animasyon", 
-            poster: "https://image.tmdb.org/t/p/w500/39wmItIWsg5sZMyRUHLkWBcuVCM.jpg", 
-            duration: "2s 05dk", imdb: "8.6", year: "2001",
-            plot: "Küçük Chihiro, ailesiyle birlikte taşınırken gizemli bir tünelin içinde kaybolur ve ruhlar dünyasına adım atar. Ailesini kurtarmak için bu garip dünyada çalışmak zorundadır."
-        },
-        { 
-            id: 14, title: "The Lord of the Rings: Fellowship", category: "Macera", 
-            poster: "https://image.tmdb.org/t/p/w500/6oom5QYQ2yQTMJIbnvbkBL9cHo6.jpg", 
-            duration: "2s 58dk", imdb: "8.8", year: "2001",
-            plot: "Genç bir hobbit olan Frodo, tüm dünyayı yok edebilecek yüzüğü yok etmek için tehlikeli bir yolculuğa çıkar. Yanında büyücü, elf, cüce ve insanlardan oluşan bir ekip vardır."
-        },
-        { 
-            id: 15, title: "Joker", category: "Dram", 
-            poster: "https://image.tmdb.org/t/p/w500/udDclJoHjfjb8Ekgsd4FDteOkCU.jpg", 
-            duration: "2s 02dk", imdb: "8.4", year: "2019",
-            plot: "Arthur Fleck, toplum tarafından dışlanmış bir komedyendir. Gotham şehrinin kaosuna sürüklenen Arthur, yavaşça ünlü suçlu Joker'e dönüşür."
-        }
-    ];
+    // ============ TMDB API KONFIGÜRASYONU ============
+    // KENDİ API KEY'İNİ BURAYA YAZ !!!
+    const TMDB_API_KEY = "b429c973c6c98439cf6e504e7ffe1678";  // ← API KEY'İNİ BURAYA YAZ
+    const TMDB_BASE_URL = "https://api.themoviedb.org/3";
+    const IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500";
 
-    let currentCategory = "Tümü";
+    let currentCategory = "popular";
+    let currentPage = 1;
+    let isLoading = false;
+    let hasMore = true;
+    let allMovies = [];
     let watchedIds = JSON.parse(localStorage.getItem("watched_film_ids")) || [];
-    let currentFilmId = null;
+    let currentMovieId = null;
+
+    // Kategori ID'leri (TMDB genre IDs)
+    const genreMap = {
+        "popular": null,
+        "Aksiyon": 28,
+        "Macera": 12,
+        "Animasyon": 16,
+        "Komedi": 35,
+        "Suç": 80,
+        "Belgesel": 99,
+        "Dram": 18,
+        "Aile": 10751,
+        "Fantastik": 14,
+        "Tarihi": 36,
+        "Korku": 27,
+        "Müzik": 10402,
+        "Gizem": 9648,
+        "Romantik": 10749,
+        "Bilim Kurgu": 878,
+        "TV Film": 10770,
+        "Gerilim": 53,
+        "Savaş": 10752,
+        "Batı": 37
+    };
 
     function saveWatched(id) {
         if(!watchedIds.includes(id)) {
             watchedIds.push(id);
             localStorage.setItem("watched_film_ids", JSON.stringify(watchedIds));
-            renderFilms();
-            renderCategories();
-            if(currentFilmId === id) {
+            renderMovies();
+            if(currentMovieId === id) {
                 document.getElementById("modalWatchBtn").innerHTML = '<i class="fas fa-check-circle"></i> İZLENDİ';
-                document.getElementById("modalWatchBtn").classList.add("watched-modal");
             }
         }
     }
@@ -495,18 +424,168 @@
         return watchedIds.includes(id);
     }
 
-    function getFilteredFilms() {
-        let films = [...FILMLER];
-        if(currentCategory !== "Tümü") {
-            films = films.filter(f => f.category === currentCategory);
+    async function fetchMovies(page = 1) {
+        isLoading = true;
+        showLoading();
+        
+        let url = `${TMDB_BASE_URL}/movie/popular?api_key=${TMDB_API_KEY}&language=tr-TR&page=${page}`;
+        
+        // Eğer özel bir kategori seçildiyse (popular değilse)
+        if(currentCategory !== "popular" && genreMap[currentCategory]) {
+            url = `${TMDB_BASE_URL}/discover/movie?api_key=${TMDB_API_KEY}&language=tr-TR&with_genres=${genreMap[currentCategory]}&sort_by=popularity.desc&page=${page}`;
+        } else if(currentCategory !== "popular") {
+            // Kategori bulunamadıysa popular devam
+            url = `${TMDB_BASE_URL}/movie/popular?api_key=${TMDB_API_KEY}&language=tr-TR&page=${page}`;
         }
-        films = films.filter(f => !isWatched(f.id));
-        films.sort((a,b) => parseFloat(b.imdb) - parseFloat(a.imdb));
-        return films;
+        
+        try {
+            const response = await fetch(url);
+            const data = await response.json();
+            
+            if(data.results && data.results.length > 0) {
+                // Detayları (süre, konu, IMDB puanı) almak için her film için ayrı istek
+                const detailedMovies = await Promise.all(
+                    data.results.map(async (movie) => {
+                        const detailUrl = `${TMDB_BASE_URL}/movie/${movie.id}?api_key=${TMDB_API_KEY}&language=tr-TR`;
+                        const detailResponse = await fetch(detailUrl);
+                        const detailData = await detailResponse.json();
+                        return {
+                            id: movie.id,
+                            title: movie.title,
+                            poster: movie.poster_path ? `${IMAGE_BASE_URL}${movie.poster_path}` : null,
+                            year: movie.release_date ? movie.release_date.split('-')[0] : "Bilinmiyor",
+                            imdb: movie.vote_average ? movie.vote_average.toFixed(1) : "?",
+                            runtime: detailData.runtime ? `${Math.floor(detailData.runtime / 60)}s ${detailData.runtime % 60}dk` : "Süre bilinmiyor",
+                            plot: detailData.overview || "Konu bilgisi bulunamadı.",
+                            category: currentCategory === "popular" ? "Popüler" : currentCategory
+                        };
+                    })
+                );
+                
+                if(page === 1) {
+                    allMovies = detailedMovies;
+                } else {
+                    allMovies = [...allMovies, ...detailedMovies];
+                }
+                
+                hasMore = data.page < data.total_pages;
+                currentPage = page;
+            } else {
+                hasMore = false;
+            }
+        } catch (error) {
+            console.error("API hatası:", error);
+            document.getElementById("filmGrid").innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:3rem;"><i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #f97316;"></i><p style="margin-top: 1rem;">API hatası! API Key'inizi kontrol edin.</p></div>`;
+        }
+        
+        isLoading = false;
+        hideLoading();
+        renderMovies();
+    }
+
+    function showLoading() {
+        const container = document.getElementById("loadMoreContainer");
+        container.innerHTML = '<div class="loading-spinner"><i class="fas fa-spinner"></i> Yükleniyor...</div>';
+    }
+
+    function hideLoading() {
+        const container = document.getElementById("loadMoreContainer");
+        if(hasMore && !isLoading) {
+            container.innerHTML = '<button class="load-more-btn" onclick="loadMore()"><i class="fas fa-arrow-down"></i> Daha Fazla Film Yükle</button>';
+        } else if(!hasMore) {
+            container.innerHTML = '<p style="color: #475569;"><i class="fas fa-check-circle"></i> Tüm filmler yüklendi!</p>';
+        } else {
+            container.innerHTML = '';
+        }
+    }
+
+    function loadMore() {
+        if(!isLoading && hasMore) {
+            fetchMovies(currentPage + 1);
+        }
+    }
+
+    function renderMovies() {
+        const grid = document.getElementById("filmGrid");
+        const filteredMovies = allMovies.filter(m => !isWatched(m.id));
+        const stats = document.getElementById("stats");
+        
+        if(filteredMovies.length === 0 && allMovies.length > 0) {
+            stats.innerHTML = `<i class="fas fa-check-circle"></i> Tüm filmleri izledin! Yeni filmler yüklemek için "Daha Fazla" butonuna tıkla.`;
+        } else {
+            stats.innerHTML = `<i class="fas fa-film"></i> Toplam ${filteredMovies.length} film gösteriliyor <i class="fas fa-eye-slash"></i> İzlediklerin çıkarıldı`;
+        }
+        
+        if(filteredMovies.length === 0 && allMovies.length === 0 && !isLoading) {
+            grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:3rem;"><i class="fas fa-ticket-alt" style="font-size: 3rem; color: #f5c518;"></i><p style="margin-top: 1rem;">Filmler yükleniyor veya API anahtarı geçersiz...</p></div>`;
+            return;
+        }
+        
+        if(filteredMovies.length === 0 && allMovies.length > 0) {
+            grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:3rem;"><i class="fas fa-trophy" style="font-size: 3rem; color: #f5c518;"></i><p style="margin-top: 1rem;">🎉 Tebrikler! Tüm filmleri izledin! Yeni filmler için "Daha Fazla" butonuna tıkla.</p></div>`;
+            return;
+        }
+        
+        grid.innerHTML = "";
+        filteredMovies.forEach(movie => {
+            const card = document.createElement("div");
+            card.className = "film-card";
+            const isWatchedMovie = isWatched(movie.id);
+            card.innerHTML = `
+                <img class="poster" src="${movie.poster || 'https://via.placeholder.com/300x450?text=Poster+Bulunamadı'}" alt="${movie.title}" loading="lazy">
+                <div class="info">
+                    <div class="title">${movie.title}</div>
+                    <div class="imdb"><i class="fab fa-imdb"></i> ${movie.imdb}</div>
+                    <div class="year"><i class="far fa-calendar-alt"></i> ${movie.year}</div>
+                    <button class="watched-btn ${isWatchedMovie ? 'watched' : ''}" data-id="${movie.id}">
+                        ${isWatchedMovie ? '<i class="fas fa-check-circle"></i> İZLENDİ' : '<i class="fas fa-eye"></i> İZLEDİM'}
+                    </button>
+                </div>
+            `;
+            
+            card.addEventListener("click", (e) => {
+                if(e.target.classList.contains("watched-btn")) return;
+                openModal(movie);
+            });
+            
+            const btn = card.querySelector(".watched-btn");
+            if(!isWatchedMovie) {
+                btn.addEventListener("click", (e) => {
+                    e.stopPropagation();
+                    const id = parseInt(btn.getAttribute("data-id"));
+                    saveWatched(id);
+                });
+            }
+            grid.appendChild(card);
+        });
+    }
+
+    function openModal(movie) {
+        currentMovieId = movie.id;
+        document.getElementById("modalPoster").src = movie.poster || 'https://via.placeholder.com/500x350?text=Poster+Bulunamadı';
+        document.getElementById("modalTitle").innerHTML = movie.title;
+        document.getElementById("modalImdb").innerHTML = `<i class="fab fa-imdb"></i> ${movie.imdb}`;
+        document.getElementById("modalYear").innerHTML = `<i class="far fa-calendar-alt"></i> ${movie.year}`;
+        document.getElementById("modalRuntime").innerHTML = `<i class="far fa-clock"></i> ${movie.runtime}`;
+        document.getElementById("modalPlot").innerHTML = movie.plot || "Konu bilgisi bulunamadı.";
+        
+        const watchBtn = document.getElementById("modalWatchBtn");
+        if(isWatched(movie.id)) {
+            watchBtn.innerHTML = '<i class="fas fa-check-circle"></i> İZLENDİ';
+        } else {
+            watchBtn.innerHTML = '<i class="fas fa-eye"></i> İZLEDİM';
+        }
+        
+        document.getElementById("modal").style.display = "flex";
+    }
+
+    function closeModal() {
+        document.getElementById("modal").style.display = "none";
+        currentMovieId = null;
     }
 
     function renderCategories() {
-        const categories = ["Tümü", "Aksiyon", "Dram", "Bilim Kurgu", "Suç", "Korku", "Animasyon", "Macera"];
+        const categories = ["popular", "Aksiyon", "Komedi", "Dram", "Korku", "Bilim Kurgu", "Romantik", "Suç", "Animasyon", "Macera", "Gerilim", "Fantastik"];
         const container = document.getElementById("categoryContainer");
         container.innerHTML = "";
         categories.forEach(cat => {
@@ -515,100 +594,29 @@
             if(currentCategory === cat) btn.classList.add("active");
             
             let icon = "";
-            if(cat === "Tümü") icon = '<i class="fas fa-border-all"></i>';
+            if(cat === "popular") icon = '<i class="fas fa-fire"></i>';
             else if(cat === "Aksiyon") icon = '<i class="fas fa-fist-raised"></i>';
             else if(cat === "Dram") icon = '<i class="fas fa-mask"></i>';
+            else if(cat === "Komedi") icon = '<i class="fas fa-laugh"></i>';
             else if(cat === "Korku") icon = '<i class="fas fa-ghost"></i>';
             else if(cat === "Bilim Kurgu") icon = '<i class="fas fa-rocket"></i>';
             else if(cat === "Animasyon") icon = '<i class="fas fa-dragon"></i>';
             else icon = '<i class="fas fa-tag"></i>';
             
-            btn.innerHTML = `${icon} ${cat}`;
+            const displayName = cat === "popular" ? "🔥 Popüler" : cat;
+            btn.innerHTML = `${icon} ${displayName}`;
             btn.addEventListener("click", () => {
                 currentCategory = cat;
+                currentPage = 1;
+                allMovies = [];
+                hasMore = true;
                 renderCategories();
-                renderFilms();
+                fetchMovies(1);
             });
             container.appendChild(btn);
         });
     }
 
-    function openModal(film) {
-        currentFilmId = film.id;
-        document.getElementById("modalPoster").src = film.poster;
-        document.getElementById("modalTitle").innerHTML = film.title;
-        document.getElementById("modalImdb").innerHTML = `<i class="fab fa-imdb"></i> ${film.imdb}`;
-        document.getElementById("modalYear").innerHTML = `<i class="far fa-calendar-alt"></i> ${film.year}`;
-        document.getElementById("modalDuration").innerHTML = `<i class="far fa-clock"></i> ${film.duration}`;
-        document.getElementById("modalCategory").innerHTML = `<i class="fas fa-tag"></i> ${film.category}`;
-        document.getElementById("modalPlot").innerHTML = film.plot;
-        
-        const watchBtn = document.getElementById("modalWatchBtn");
-        if(isWatched(film.id)) {
-            watchBtn.innerHTML = '<i class="fas fa-check-circle"></i> İZLENDİ';
-            watchBtn.classList.add("watched-modal");
-        } else {
-            watchBtn.innerHTML = '<i class="fas fa-eye"></i> İZLEDİM';
-            watchBtn.classList.remove("watched-modal");
-        }
-        
-        document.getElementById("modal").style.display = "flex";
-    }
-
-    function closeModal() {
-        document.getElementById("modal").style.display = "none";
-        currentFilmId = null;
-    }
-
-    function renderFilms() {
-        const grid = document.getElementById("filmGrid");
-        const films = getFilteredFilms();
-        const stats = document.getElementById("stats");
-        stats.innerHTML = `<i class="fas fa-film"></i> Toplam ${films.length} film gösteriliyor <i class="fas fa-eye-slash"></i> İzlediklerin çıkarıldı`;
-        
-        if(films.length === 0) {
-            grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:3rem;"><i class="fas fa-ticket-alt" style="font-size: 3rem; color: #f5c518;"></i><p style="margin-top: 1rem;">🎉 Tüm filmleri izledin! Yeni filmler ekleniyor...</p></div>`;
-            return;
-        }
-        
-        grid.innerHTML = "";
-        films.forEach(film => {
-            const card = document.createElement("div");
-            card.className = "film-card";
-            const isWatchedFilm = isWatched(film.id);
-            card.innerHTML = `
-                <img class="poster" src="${film.poster}" alt="${film.title}" loading="lazy" onerror="this.src='https://image.tmdb.org/t/p/w500/8cdWjvZQUxUrmHMPOju9Ftv7Z8d.jpg'">
-                <div class="info">
-                    <div class="title">${film.title}</div>
-                    <div class="imdb"><i class="fab fa-imdb"></i> ${film.imdb}</div>
-                    <div class="duration"><i class="far fa-clock"></i> ${film.duration}</div>
-                    <button class="watched-btn ${isWatchedFilm ? 'watched' : ''}" data-id="${film.id}">
-                        ${isWatchedFilm ? '<i class="fas fa-check-circle"></i> İZLENDİ' : '<i class="fas fa-eye"></i> İZLEDİM'}
-                    </button>
-                </div>
-            `;
-            
-            // Kartın kendisine tıklayınca detay aç
-            card.addEventListener("click", (e) => {
-                if(e.target.classList.contains("watched-btn")) return;
-                openModal(film);
-            });
-            
-            const btn = card.querySelector(".watched-btn");
-            if(!isWatchedFilm) {
-                btn.addEventListener("click", (e) => {
-                    e.stopPropagation();
-                    const id = parseInt(btn.getAttribute("data-id"));
-                    saveWatched(id);
-                    renderFilms();
-                    renderCategories();
-                });
-            }
-            grid.appendChild(card);
-        });
-    }
-
-    // Modal dışına tıklayınca kapat
     window.onclick = function(event) {
         const modal = document.getElementById("modal");
         if (event.target === modal) {
@@ -616,17 +624,14 @@
         }
     }
 
-    // Modal içindeki izledim butonu
     document.getElementById("modalWatchBtn").addEventListener("click", () => {
-        if(currentFilmId && !isWatched(currentFilmId)) {
-            saveWatched(currentFilmId);
-            renderFilms();
-            renderCategories();
+        if(currentMovieId && !isWatched(currentMovieId)) {
+            saveWatched(currentMovieId);
         }
     });
 
     renderCategories();
-    renderFilms();
+    fetchMovies(1);
 </script>
 </body>
 </html>

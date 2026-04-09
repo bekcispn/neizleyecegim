@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Diziler - IMDB En Yüksek Puanlılar | Abican</title>
+    <title>Diziler - TMDB En Popüler | Abican</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         * {
@@ -47,7 +47,7 @@
             margin-right: 8px;
         }
 
-        .back-btn {
+        .back-btn, .load-more-btn {
             background: rgba(30, 41, 59, 0.8);
             border: 1px solid rgba(245, 197, 24, 0.3);
             padding: 0.5rem 1.2rem;
@@ -58,7 +58,7 @@
             transition: all 0.2s;
         }
 
-        .back-btn:hover {
+        .back-btn:hover, .load-more-btn:hover {
             background: #f5c518;
             color: #0f172a;
         }
@@ -97,7 +97,7 @@
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
             gap: 1.5rem;
-            padding: 1rem 1.5rem 3rem;
+            padding: 1rem 1.5rem 2rem;
             max-width: 1400px;
             margin: 0 auto;
         }
@@ -151,7 +151,7 @@
             margin: 0.5rem 0;
         }
 
-        .detail {
+        .year {
             font-size: 0.7rem;
             color: #94a3b8;
             margin: 6px 0;
@@ -182,7 +182,6 @@
             opacity: 0.8;
         }
 
-        /* Modal */
         .modal {
             display: none;
             position: fixed;
@@ -294,6 +293,11 @@
             margin-top: 1rem;
         }
 
+        .load-more-container {
+            text-align: center;
+            padding: 1rem 0 2rem;
+        }
+
         .footer {
             text-align: center;
             padding: 1.5rem;
@@ -307,13 +311,28 @@
             color: #f5c518;
             font-size: 0.8rem;
         }
+
+        .loading-spinner {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .loading-spinner i {
+            font-size: 2rem;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
 
 <div class="header">
     <div class="logo">
-        <h1><i class="fas fa-tv"></i> ABICAN DİZİLER</h1>
+        <h1><i class="fas fa-tv"></i> ABICAN DİZİLER | TMDB</h1>
     </div>
     <button class="back-btn" onclick="window.location.href='index.html'"><i class="fas fa-arrow-left"></i> Ana Menü</button>
 </div>
@@ -321,8 +340,9 @@
 <div class="category-tabs" id="categoryContainer"></div>
 <div class="stats" id="stats"></div>
 <div class="dizi-grid" id="diziGrid"></div>
+<div class="load-more-container" id="loadMoreContainer"></div>
 <div class="footer">
-    <i class="fas fa-star" style="color: #f5c518;"></i> IMDB puanları güncel • 
+    <i class="fas fa-star" style="color: #f5c518;"></i> TMDB'den gerçek zamanlı veri • 
     <i class="fas fa-check-circle" style="color: #10b981;"></i> İzlediklerin kaybolur •
     <i class="fas fa-info-circle"></i> Diziye tıkla detayları gör
 </div>
@@ -350,80 +370,42 @@
 </div>
 
 <script>
-    const DIZILER = [
-        { 
-            id: 1, title: "Breaking Bad", category: "Suç", 
-            poster: "https://image.tmdb.org/t/p/w500/ggFHVNu6YYI5L9pCfOacjizRGt.jpg", 
-            seasons: "5 Sezon", episodeMins: "47 dk", imdb: "9.5", year: "2008",
-            plot: "Lise kimya öğretmeni Walter White, akciğer kanseri teşhisi alınca ailesine maddi bir gelecek bırakmak için uyuşturucu üretmeye başlar. Eski öğrencisi Jesse Pinkman ile birlikte suç dünyasının en büyük isimlerinden biri olur."
-        },
-        { 
-            id: 2, title: "Game of Thrones", category: "Fantastik", 
-            poster: "https://image.tmdb.org/t/p/w500/7WUHnWGx5jj145A2HM6M4SjF4dB.jpg", 
-            seasons: "8 Sezon", episodeMins: "55 dk", imdb: "9.2", year: "2011",
-            plot: "Taht Oyunları, Westeros kıtasındaki yedi krallık için yapılan iktidar savaşını anlatır. Demir Taht'ı ele geçirmek isteyen soylu aileler, entrikalar, savaşlar ve ejderhalarla dolu bir mücadeleye girişir."
-        },
-        { 
-            id: 3, title: "Stranger Things", category: "Bilim Kurgu", 
-            poster: "https://image.tmdb.org/t/p/w500/49WJfeNqCm1ZbKqHj5PasUzXHnZ.jpg", 
-            seasons: "4 Sezon", episodeMins: "51 dk", imdb: "8.7", year: "2016",
-            plot: "1980'lerin küçük bir kasabasında, bir çocuk gizemli bir şekilde kaybolur. Arkadaşları, ailesi ve kasabanın şerifi, paralel bir evren olan Tersyüz'ün sırlarını ortaya çıkarmaya çalışır."
-        },
-        { 
-            id: 4, title: "The Sopranos", category: "Suç", 
-            poster: "https://image.tmdb.org/t/p/w500/rLbbrYkU2VcG8Vdn0Sgso0E6TWZ.jpg", 
-            seasons: "6 Sezon", episodeMins: "55 dk", imdb: "9.2", year: "1999",
-            plot: "New Jersey mafya lideri Tony Soprano, iş ve aile hayatını dengelemeye çalışırken psikolojik sorunlar yaşar. Bir psikiyatriste gitmeye başlayan Tony, suç dünyasının zorluklarıyla başa çıkmaya çalışır."
-        },
-        { 
-            id: 5, title: "The Wire", category: "Suç", 
-            poster: "https://image.tmdb.org/t/p/w500/4mx8jXtzwMpePzkPRiPHVsOTVCu.jpg", 
-            seasons: "5 Sezon", episodeMins: "59 dk", imdb: "9.3", year: "2002",
-            plot: "Baltimore şehrinin uyuşturucu ticaretini, liman işçilerini, belediye politikalarını ve eğitim sistemini mercek altına alan dizi, her sezon farklı bir kurumu odağına alır."
-        },
-        { 
-            id: 6, title: "Better Call Saul", category: "Suç", 
-            poster: "https://image.tmdb.org/t/p/w500/fC2HDm5t0kHl7McTmNlSr30D8i8.jpg", 
-            seasons: "6 Sezon", episodeMins: "52 dk", imdb: "9.0", year: "2015",
-            plot: "Breaking Bad'in sevilen avukatı Saul Goodman'ın, Jimmy McGill olduğu günlere uzanan hikayesi. İyi niyetli bir avukatken yavaş yavaş suç dünyasının içine çekilen Jimmy'nin dönüşümü anlatılır."
-        },
-        { 
-            id: 7, title: "Sherlock", category: "Gizem", 
-            poster: "https://image.tmdb.org/t/p/w500/7WTsnHkbA0FaG6R9twfFde4IqR8.jpg", 
-            seasons: "4 Sezon", episodeMins: "88 dk", imdb: "9.1", year: "2010",
-            plot: "Modern Londra'da geçen dizi, ünlü dedektif Sherlock Holmes ve arkadaşı Dr. John Watson'ın çözdüğü karmaşık vakaları konu alır. Sherlock'un dehası ve sosyal beceriksizliği her bölümde izleyiciyi büyüler."
-        },
-        { 
-            id: 8, title: "Friends", category: "Komedi", 
-            poster: "https://image.tmdb.org/t/p/w500/f496cm9enuEsZkSPzCwnTESEK5s.jpg", 
-            seasons: "10 Sezon", episodeMins: "22 dk", imdb: "8.9", year: "1994",
-            plot: "New York'ta yaşayan altı arkadaşın hayatları, aşkları ve işleri etrafında dönen komedi dizisi. Monica, Rachel, Phoebe, Chandler, Joey ve Ross'un birbirleriyle olan ilişkileri eğlenceli bir dille anlatılır."
-        },
-        { 
-            id: 9, title: "The Office US", category: "Komedi", 
-            poster: "https://image.tmdb.org/t/p/w500/qWnJxZirhqB2k0rMfmpL76cjObJ.jpg", 
-            seasons: "9 Sezon", episodeMins: "22 dk", imdb: "9.0", year: "2005",
-            plot: "Dunder Mifflin kağıt şirketinin çalışanlarının günlük hayatlarını belgesel formatında anlatan dizi, bölge müdürü Michael Scott'ın garip yönetim tarzıyla komik olaylara sahne olur."
-        },
-        { 
-            id: 10, title: "Black Mirror", category: "Bilim Kurgu", 
-            poster: "https://image.tmdb.org/t/p/w500/5UaYsGZOFhjFDwQh6GuLjjA4Wsu.jpg", 
-            seasons: "6 Sezon", episodeMins: "60 dk", imdb: "8.7", year: "2011",
-            plot: "Teknolojinin karanlık yüzünü ve insan doğasını sorgulayan antoloji dizisi. Her bölüm bağımsız bir hikaye anlatır ve izleyiciyi teknolojinin olası tehlikeleri hakkında düşündürür."
-        }
-    ];
+    // ============ TMDB API KONFIGÜRASYONU ============
+    const TMDB_API_KEY = "b429c973c6c98439cf6e504e7ffe1678";  // ← API KEY'İNİ BURAYA YAZ
+    const TMDB_BASE_URL = "https://api.themoviedb.org/3";
+    const IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500";
 
-    let currentCategory = "Tümü";
-    let watchedIds = JSON.parse(localStorage.getItem("watched_dizi_ids")) || [];
-    let currentDiziId = null;
+    let currentCategory = "popular";
+    let currentPage = 1;
+    let isLoading = false;
+    let hasMore = true;
+    let allShows = [];
+    let watchedIds = JSON.parse(localStorage.getItem("watched_tv_ids")) || [];
+    let currentShowId = null;
+
+    const genreMap = {
+        "popular": null,
+        "Aksiyon": 10759,
+        "Animasyon": 16,
+        "Komedi": 35,
+        "Suç": 80,
+        "Belgesel": 99,
+        "Dram": 18,
+        "Aile": 10751,
+        "Gizem": 9648,
+        "Romantik": 10749,
+        "Bilim Kurgu": 10765,
+        "Gerilim": 53,
+        "Savaş": 10752,
+        "Batı": 37
+    };
 
     function saveWatched(id) {
         if(!watchedIds.includes(id)) {
             watchedIds.push(id);
-            localStorage.setItem("watched_dizi_ids", JSON.stringify(watchedIds));
-            renderDiziler();
-            renderCategories();
-            if(currentDiziId === id) {
+            localStorage.setItem("watched_tv_ids", JSON.stringify(watchedIds));
+            renderShows();
+            if(currentShowId === id) {
                 document.getElementById("modalWatchBtn").innerHTML = '<i class="fas fa-check-circle"></i> İZLENDİ';
             }
         }
@@ -433,54 +415,150 @@
         return watchedIds.includes(id);
     }
 
-    function getFilteredDiziler() {
-        let diziler = [...DIZILER];
-        if(currentCategory !== "Tümü") {
-            diziler = diziler.filter(d => d.category === currentCategory);
+    async function fetchShows(page = 1) {
+        isLoading = true;
+        showLoading();
+        
+        let url = `${TMDB_BASE_URL}/tv/popular?api_key=${TMDB_API_KEY}&language=tr-TR&page=${page}`;
+        
+        if(currentCategory !== "popular" && genreMap[currentCategory]) {
+            url = `${TMDB_BASE_URL}/discover/tv?api_key=${TMDB_API_KEY}&language=tr-TR&with_genres=${genreMap[currentCategory]}&sort_by=popularity.desc&page=${page}`;
+        } else if(currentCategory !== "popular") {
+            url = `${TMDB_BASE_URL}/tv/popular?api_key=${TMDB_API_KEY}&language=tr-TR&page=${page}`;
         }
-        diziler = diziler.filter(d => !isWatched(d.id));
-        diziler.sort((a,b) => parseFloat(b.imdb) - parseFloat(a.imdb));
-        return diziler;
+        
+        try {
+            const response = await fetch(url);
+            const data = await response.json();
+            
+            if(data.results && data.results.length > 0) {
+                const detailedShows = await Promise.all(
+                    data.results.map(async (show) => {
+                        const detailUrl = `${TMDB_BASE_URL}/tv/${show.id}?api_key=${TMDB_API_KEY}&language=tr-TR`;
+                        const detailResponse = await fetch(detailUrl);
+                        const detailData = await detailResponse.json();
+                        return {
+                            id: show.id,
+                            title: show.name,
+                            poster: show.poster_path ? `${IMAGE_BASE_URL}${show.poster_path}` : null,
+                            year: show.first_air_date ? show.first_air_date.split('-')[0] : "Bilinmiyor",
+                            imdb: show.vote_average ? show.vote_average.toFixed(1) : "?",
+                            seasons: detailData.number_of_seasons ? `${detailData.number_of_seasons} Sezon` : "Sezon bilinmiyor",
+                            plot: detailData.overview || "Konu bilgisi bulunamadı.",
+                            category: currentCategory === "popular" ? "Popüler" : currentCategory
+                        };
+                    })
+                );
+                
+                if(page === 1) {
+                    allShows = detailedShows;
+                } else {
+                    allShows = [...allShows, ...detailedShows];
+                }
+                
+                hasMore = data.page < data.total_pages;
+                currentPage = page;
+            } else {
+                hasMore = false;
+            }
+        } catch (error) {
+            console.error("API hatası:", error);
+            document.getElementById("diziGrid").innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:3rem;"><i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #f97316;"></i><p style="margin-top: 1rem;">API hatası! API Key'inizi kontrol edin.</p></div>`;
+        }
+        
+        isLoading = false;
+        hideLoading();
+        renderShows();
     }
 
-    function renderCategories() {
-        const categories = ["Tümü", "Suç", "Fantastik", "Bilim Kurgu", "Komedi", "Gizem"];
-        const container = document.getElementById("categoryContainer");
-        container.innerHTML = "";
-        categories.forEach(cat => {
-            const btn = document.createElement("button");
-            btn.className = "cat-btn";
-            if(currentCategory === cat) btn.classList.add("active");
+    function showLoading() {
+        const container = document.getElementById("loadMoreContainer");
+        container.innerHTML = '<div class="loading-spinner"><i class="fas fa-spinner"></i> Yükleniyor...</div>';
+    }
+
+    function hideLoading() {
+        const container = document.getElementById("loadMoreContainer");
+        if(hasMore && !isLoading) {
+            container.innerHTML = '<button class="load-more-btn" onclick="loadMore()"><i class="fas fa-arrow-down"></i> Daha Fazla Dizi Yükle</button>';
+        } else if(!hasMore) {
+            container.innerHTML = '<p style="color: #475569;"><i class="fas fa-check-circle"></i> Tüm diziler yüklendi!</p>';
+        } else {
+            container.innerHTML = '';
+        }
+    }
+
+    function loadMore() {
+        if(!isLoading && hasMore) {
+            fetchShows(currentPage + 1);
+        }
+    }
+
+    function renderShows() {
+        const grid = document.getElementById("diziGrid");
+        const filteredShows = allShows.filter(s => !isWatched(s.id));
+        const stats = document.getElementById("stats");
+        
+        if(filteredShows.length === 0 && allShows.length > 0) {
+            stats.innerHTML = `<i class="fas fa-check-circle"></i> Tüm dizileri izledin! Yeni diziler yüklemek için "Daha Fazla" butonuna tıkla.`;
+        } else {
+            stats.innerHTML = `<i class="fas fa-tv"></i> Toplam ${filteredShows.length} dizi gösteriliyor <i class="fas fa-eye-slash"></i> İzlediklerin çıkarıldı`;
+        }
+        
+        if(filteredShows.length === 0 && allShows.length === 0 && !isLoading) {
+            grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:3rem;"><i class="fas fa-ticket-alt" style="font-size: 3rem; color: #f5c518;"></i><p style="margin-top: 1rem;">Diziler yükleniyor veya API anahtarı geçersiz...</p></div>`;
+            return;
+        }
+        
+        if(filteredShows.length === 0 && allShows.length > 0) {
+            grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:3rem;"><i class="fas fa-trophy" style="font-size: 3rem; color: #f5c518;"></i><p style="margin-top: 1rem;">🎉 Tebrikler! Tüm dizileri izledin! Yeni diziler için "Daha Fazla" butonuna tıkla.</p></div>`;
+            return;
+        }
+        
+        grid.innerHTML = "";
+        filteredShows.forEach(show => {
+            const card = document.createElement("div");
+            card.className = "dizi-card";
+            const isWatchedShow = isWatched(show.id);
+            card.innerHTML = `
+                <img class="poster" src="${show.poster || 'https://via.placeholder.com/300x450?text=Poster+Bulunamadı'}" alt="${show.title}" loading="lazy">
+                <div class="info">
+                    <div class="title">${show.title}</div>
+                    <div class="imdb"><i class="fab fa-imdb"></i> ${show.imdb}</div>
+                    <div class="year"><i class="far fa-calendar-alt"></i> ${show.year}</div>
+                    <button class="watched-btn ${isWatchedShow ? 'watched' : ''}" data-id="${show.id}">
+                        ${isWatchedShow ? '<i class="fas fa-check-circle"></i> İZLENDİ' : '<i class="fas fa-eye"></i> İZLEDİM'}
+                    </button>
+                </div>
+            `;
             
-            let icon = "";
-            if(cat === "Tümü") icon = '<i class="fas fa-border-all"></i>';
-            else if(cat === "Suç") icon = '<i class="fas fa-gavel"></i>';
-            else if(cat === "Fantastik") icon = '<i class="fas fa-dragon"></i>';
-            else if(cat === "Bilim Kurgu") icon = '<i class="fas fa-rocket"></i>';
-            else if(cat === "Komedi") icon = '<i class="fas fa-laugh"></i>';
-            else icon = '<i class="fas fa-tag"></i>';
-            
-            btn.innerHTML = `${icon} ${cat}`;
-            btn.addEventListener("click", () => {
-                currentCategory = cat;
-                renderCategories();
-                renderDiziler();
+            card.addEventListener("click", (e) => {
+                if(e.target.classList.contains("watched-btn")) return;
+                openModal(show);
             });
-            container.appendChild(btn);
+            
+            const btn = card.querySelector(".watched-btn");
+            if(!isWatchedShow) {
+                btn.addEventListener("click", (e) => {
+                    e.stopPropagation();
+                    const id = parseInt(btn.getAttribute("data-id"));
+                    saveWatched(id);
+                });
+            }
+            grid.appendChild(card);
         });
     }
 
-    function openModal(dizi) {
-        currentDiziId = dizi.id;
-        document.getElementById("modalPoster").src = dizi.poster;
-        document.getElementById("modalTitle").innerHTML = dizi.title;
-        document.getElementById("modalImdb").innerHTML = `<i class="fab fa-imdb"></i> ${dizi.imdb}`;
-        document.getElementById("modalYear").innerHTML = `<i class="far fa-calendar-alt"></i> ${dizi.year}`;
-        document.getElementById("modalSeasons").innerHTML = `<i class="fas fa-layer-group"></i> ${dizi.seasons}`;
-        document.getElementById("modalPlot").innerHTML = dizi.plot;
+    function openModal(show) {
+        currentShowId = show.id;
+        document.getElementById("modalPoster").src = show.poster || 'https://via.placeholder.com/500x350?text=Poster+Bulunamadı';
+        document.getElementById("modalTitle").innerHTML = show.title;
+        document.getElementById("modalImdb").innerHTML = `<i class="fab fa-imdb"></i> ${show.imdb}`;
+        document.getElementById("modalYear").innerHTML = `<i class="far fa-calendar-alt"></i> ${show.year}`;
+        document.getElementById("modalSeasons").innerHTML = `<i class="fas fa-layer-group"></i> ${show.seasons}`;
+        document.getElementById("modalPlot").innerHTML = show.plot || "Konu bilgisi bulunamadı.";
         
         const watchBtn = document.getElementById("modalWatchBtn");
-        if(isWatched(dizi.id)) {
+        if(isWatched(show.id)) {
             watchBtn.innerHTML = '<i class="fas fa-check-circle"></i> İZLENDİ';
         } else {
             watchBtn.innerHTML = '<i class="fas fa-eye"></i> İZLEDİM';
@@ -491,53 +569,38 @@
 
     function closeModal() {
         document.getElementById("modal").style.display = "none";
-        currentDiziId = null;
+        currentShowId = null;
     }
 
-    function renderDiziler() {
-        const grid = document.getElementById("diziGrid");
-        const diziler = getFilteredDiziler();
-        const stats = document.getElementById("stats");
-        stats.innerHTML = `<i class="fas fa-tv"></i> Toplam ${diziler.length} dizi gösteriliyor <i class="fas fa-eye-slash"></i> İzlediklerin çıkarıldı`;
-        
-        if(diziler.length === 0) {
-            grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:3rem;"><i class="fas fa-ticket-alt" style="font-size: 3rem; color: #f5c518;"></i><p style="margin-top: 1rem;">🎉 Tüm dizileri izledin! Yeni sezonlar bekleniyor...</p></div>`;
-            return;
-        }
-        
-        grid.innerHTML = "";
-        diziler.forEach(dizi => {
-            const card = document.createElement("div");
-            card.className = "dizi-card";
-            const isWatchedDizi = isWatched(dizi.id);
-            card.innerHTML = `
-                <img class="poster" src="${dizi.poster}" alt="${dizi.title}" loading="lazy" onerror="this.src='https://image.tmdb.org/t/p/w500/8cdWjvZQUxUrmHMPOju9Ftv7Z8d.jpg'">
-                <div class="info">
-                    <div class="title">${dizi.title}</div>
-                    <div class="imdb"><i class="fab fa-imdb"></i> ${dizi.imdb}</div>
-                    <div class="detail"><i class="fas fa-layer-group"></i> ${dizi.seasons} • <i class="far fa-clock"></i> ${dizi.episodeMins}/bölüm</div>
-                    <button class="watched-btn ${isWatchedDizi ? 'watched' : ''}" data-id="${dizi.id}">
-                        ${isWatchedDizi ? '<i class="fas fa-check-circle"></i> İZLENDİ' : '<i class="fas fa-eye"></i> İZLEDİM'}
-                    </button>
-                </div>
-            `;
+    function renderCategories() {
+        const categories = ["popular", "Aksiyon", "Komedi", "Dram", "Bilim Kurgu", "Suç", "Animasyon", "Gerilim", "Romantik", "Gizem"];
+        const container = document.getElementById("categoryContainer");
+        container.innerHTML = "";
+        categories.forEach(cat => {
+            const btn = document.createElement("button");
+            btn.className = "cat-btn";
+            if(currentCategory === cat) btn.classList.add("active");
             
-            card.addEventListener("click", (e) => {
-                if(e.target.classList.contains("watched-btn")) return;
-                openModal(dizi);
+            let icon = "";
+            if(cat === "popular") icon = '<i class="fas fa-fire"></i>';
+            else if(cat === "Aksiyon") icon = '<i class="fas fa-fist-raised"></i>';
+            else if(cat === "Dram") icon = '<i class="fas fa-mask"></i>';
+            else if(cat === "Komedi") icon = '<i class="fas fa-laugh"></i>';
+            else if(cat === "Bilim Kurgu") icon = '<i class="fas fa-rocket"></i>';
+            else if(cat === "Animasyon") icon = '<i class="fas fa-dragon"></i>';
+            else icon = '<i class="fas fa-tag"></i>';
+            
+            const displayName = cat === "popular" ? "🔥 Popüler" : cat;
+            btn.innerHTML = `${icon} ${displayName}`;
+            btn.addEventListener("click", () => {
+                currentCategory = cat;
+                currentPage = 1;
+                allShows = [];
+                hasMore = true;
+                renderCategories();
+                fetchShows(1);
             });
-            
-            const btn = card.querySelector(".watched-btn");
-            if(!isWatchedDizi) {
-                btn.addEventListener("click", (e) => {
-                    e.stopPropagation();
-                    const id = parseInt(btn.getAttribute("data-id"));
-                    saveWatched(id);
-                    renderDiziler();
-                    renderCategories();
-                });
-            }
-            grid.appendChild(card);
+            container.appendChild(btn);
         });
     }
 
@@ -549,15 +612,13 @@
     }
 
     document.getElementById("modalWatchBtn").addEventListener("click", () => {
-        if(currentDiziId && !isWatched(currentDiziId)) {
-            saveWatched(currentDiziId);
-            renderDiziler();
-            renderCategories();
+        if(currentShowId && !isWatched(currentShowId)) {
+            saveWatched(currentShowId);
         }
     });
 
     renderCategories();
-    renderDiziler();
+    fetchShows(1);
 </script>
 </body>
 </html>
