@@ -38,7 +38,7 @@
         .modal-imdb { background: #f5c518; color: #000; padding: 0.2rem 0.7rem; border-radius: 20px; font-weight: bold; font-size: 0.8rem; }
         .modal-year, .modal-runtime { background: rgba(255,255,255,0.1); padding: 0.2rem 0.7rem; border-radius: 20px; font-size: 0.8rem; }
         .modal-plot { margin: 1rem 0; line-height: 1.5; color: #cbd5e1; font-size: 0.85rem; }
-        .modal-plot h4 { color: #f5c518; margin-bottom: 0.5rem; font-size: 0.9rem; }
+        .modal-plot h4 { color: #f5c518; margin-bottom: 0.5rem; }
         .modal-watch-btn { width: 100%; padding: 0.7rem; background: #f5c518; border: none; border-radius: 40px; font-weight: bold; cursor: pointer; margin-top: 1rem; }
         .footer { text-align: center; padding: 1.5rem; font-size: 0.7rem; color: #475569; }
         .stats { text-align: center; padding: 0.5rem; color: #f5c518; font-size: 0.75rem; }
@@ -55,7 +55,7 @@
 <div class="category-tabs" id="categoryContainer"></div>
 <div class="stats" id="stats"></div>
 <div class="film-grid" id="filmGrid"><div class="loading"><i class="fas fa-spinner fa-spin"></i><br>Filmler yükleniyor...</div></div>
-<div class="footer"><i class="fab fa-imdb"></i> IMDb Resmi Puanlar • <i class="fas fa-check-circle"></i> İzlediklerin kaybolur</div>
+<div class="footer"><i class="fab fa-imdb"></i> IMDb Puanları • <i class="fas fa-check-circle"></i> İzlediklerin kaybolur</div>
 <div id="modal" class="modal"><div class="modal-content"><div class="modal-header"><img id="modalPoster" class="modal-poster" src=""><button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button></div><div class="modal-body"><h2 class="modal-title" id="modalTitle"></h2><div class="modal-meta"><span class="modal-imdb" id="modalImdb"></span><span class="modal-year" id="modalYear"></span><span class="modal-runtime" id="modalRuntime"></span></div><div class="modal-plot"><h4><i class="fas fa-align-left"></i> Konusu</h4><p id="modalPlot"></p></div><button class="modal-watch-btn" id="modalWatchBtn"><i class="fas fa-eye"></i> İZLEDİM</button></div></div></div>
 <script>
     const TMDB_API_KEY = "b429c973c6c98439cf6e504e7ffe1678";
@@ -73,13 +73,6 @@
             
             for (let i = 0; i < allMovies.length; i++) {
                 const m = allMovies[i];
-                if (m.runtime && m.runtime !== '?') {
-                    const mins = parseInt(m.runtime);
-                    m.runtime_display = `${Math.floor(mins/60)}s ${mins%60}dk`;
-                } else {
-                    m.runtime_display = "Süre yok";
-                }
-                
                 try {
                     const searchUrl = `https://api.themoviedb.org/3/find/${m.id}?api_key=${TMDB_API_KEY}&external_source=imdb_id`;
                     const posterRes = await fetch(searchUrl);
@@ -126,9 +119,9 @@
         document.querySelectorAll('.film-card').forEach(card => { card.addEventListener('click', (e) => { if(e.target.classList.contains('watched-btn')) return; const movie = allMovies.find(m => m.id === card.dataset.id); if(movie) openModal(movie); }); });
         document.querySelectorAll('.watched-btn:not(.watched)').forEach(btn => { btn.addEventListener('click', (e) => { e.stopPropagation(); saveWatched(btn.dataset.id); renderMovies(); }); });
     }
-    function openModal(m) { currentMovieId = m.id; document.getElementById("modalPoster").src = m.poster; document.getElementById("modalTitle").innerHTML = m.title; document.getElementById("modalImdb").innerHTML = `<i class="fab fa-imdb"></i> ${m.imdb}`; document.getElementById("modalYear").innerHTML = `<i class="far fa-calendar-alt"></i> ${m.year}`; document.getElementById("modalRuntime").innerHTML = `<i class="far fa-clock"></i> ${m.runtime_display}`; document.getElementById("modalPlot").innerHTML = m.plot || "Konu bilgisi yok"; document.getElementById("modalWatchBtn").innerHTML = isWatched(m.id) ? '<i class="fas fa-check-circle"></i> İZLENDİ' : '<i class="fas fa-eye"></i> İZLEDİM'; document.getElementById("modal").style.display = "flex"; }
+    function openModal(m) { currentMovieId = m.id; document.getElementById("modalPoster").src = m.poster; document.getElementById("modalTitle").innerHTML = m.title; document.getElementById("modalImdb").innerHTML = `<i class="fab fa-imdb"></i> ${m.imdb}`; document.getElementById("modalYear").innerHTML = `<i class="far fa-calendar-alt"></i> ${m.year}`; document.getElementById("modalRuntime").innerHTML = `<i class="far fa-clock"></i> ${m.runtime}`; document.getElementById("modalPlot").innerHTML = m.plot || "Konu bilgisi yok"; document.getElementById("modalWatchBtn").innerHTML = isWatched(m.id) ? '<i class="fas fa-check-circle"></i> İZLENDİ' : '<i class="fas fa-eye"></i> İZLEDİM'; document.getElementById("modal").style.display = "flex"; }
     function closeModal() { document.getElementById("modal").style.display = "none"; currentMovieId = null; }
-    function renderCategories() { const cats = ["all", "Action", "Comedy", "Drama", "Horror", "Sci-Fi", "Romance", "Crime", "Thriller"]; document.getElementById("categoryContainer").innerHTML = cats.map(c => `<button class="cat-btn ${currentCategory === c ? 'active' : ''}" data-cat="${c}"><i class="fas ${c === 'all' ? 'fa-border-all' : c === 'Action' ? 'fa-fist-raised' : c === 'Drama' ? 'fa-mask' : c === 'Comedy' ? 'fa-laugh' : c === 'Horror' ? 'fa-ghost' : c === 'Sci-Fi' ? 'fa-rocket' : 'fa-tag'}"></i> ${c === 'all' ? 'Tümü' : c}</button>`).join(''); document.querySelectorAll('.cat-btn').forEach(btn => { btn.addEventListener('click', () => { currentCategory = btn.dataset.cat; renderCategories(); renderMovies(); }); }); }
+    function renderCategories() { const cats = ["all", "Aksiyon", "Komedi", "Dram", "Korku", "Bilim Kurgu", "Romantik", "Suç", "Gerilim"]; const catMap = {"all":"Tümü","Action":"Aksiyon","Comedy":"Komedi","Drama":"Dram","Horror":"Korku","Sci-Fi":"Bilim Kurgu","Romance":"Romantik","Crime":"Suç","Thriller":"Gerilim"}; document.getElementById("categoryContainer").innerHTML = cats.map(c => `<button class="cat-btn ${currentCategory === c ? 'active' : ''}" data-cat="${c}"><i class="fas ${c === 'all' ? 'fa-border-all' : c === 'Action' ? 'fa-fist-raised' : c === 'Drama' ? 'fa-mask' : c === 'Comedy' ? 'fa-laugh' : c === 'Horror' ? 'fa-ghost' : c === 'Sci-Fi' ? 'fa-rocket' : 'fa-tag'}"></i> ${catMap[c] || c}</button>`).join(''); document.querySelectorAll('.cat-btn').forEach(btn => { btn.addEventListener('click', () => { currentCategory = btn.dataset.cat; renderCategories(); renderMovies(); }); }); }
     window.onclick = function(e) { if(e.target === document.getElementById("modal")) closeModal(); }
     document.getElementById("modalWatchBtn").addEventListener("click", () => { if(currentMovieId && !isWatched(currentMovieId)) saveWatched(currentMovieId); });
     loadData();
