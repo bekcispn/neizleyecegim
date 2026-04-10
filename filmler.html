@@ -29,7 +29,7 @@
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 1000; justify-content: center; align-items: center; }
         .modal-content { background: linear-gradient(135deg, #1e293b, #0f172a); border-radius: 24px; max-width: 500px; width: 90%; max-height: 85vh; overflow-y: auto; border: 1px solid #f5c518; }
         .modal-header { position: relative; }
-        .modal-poster { width: 100%; height: 350px; object-fit: cover; border-radius: 24px 24px 0 0; }
+        .modal-poster { width: 100%; height: 350px; object-fit: cover; border-radius: 24px 24px 0 0; background: #1e293b; }
         .modal-close { position: absolute; top: 15px; right: 15px; background: rgba(0,0,0,0.6); border: none; color: white; width: 36px; height: 36px; border-radius: 50%; font-size: 1rem; cursor: pointer; }
         .modal-close:hover { background: #f97316; }
         .modal-body { padding: 1.5rem; }
@@ -57,6 +57,7 @@
     <span class="region-badge"><i class="fab fa-imdb"></i> IMDb Resmi Puanlar</span>
     <span class="region-badge"><i class="fas fa-globe-americas"></i> USA/UK/Europe</span>
     <span class="region-badge"><i class="fas fa-ban"></i> Türk/Asya/Anime yok</span>
+    <span class="region-badge"><i class="fas fa-image"></i> TMDB Poster</span>
 </div>
 <div class="category-tabs" id="categoryContainer"></div>
 <div class="stats" id="stats"></div>
@@ -64,10 +65,33 @@
 <div class="footer"><i class="fab fa-imdb"></i> IMDb Resmi Veri Seti • <i class="fas fa-check-circle"></i> İzlediklerin kaybolur</div>
 <div id="modal" class="modal"><div class="modal-content"><div class="modal-header"><img id="modalPoster" class="modal-poster" src=""><button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button></div><div class="modal-body"><h2 class="modal-title" id="modalTitle"></h2><div class="modal-meta"><span class="modal-imdb" id="modalImdb"></span><span class="modal-year" id="modalYear"></span><span class="modal-runtime" id="modalRuntime"></span></div><div class="modal-plot"><h4><i class="fas fa-align-left"></i> Konusu</h4><p id="modalPlot"></p></div><button class="modal-watch-btn" id="modalWatchBtn"><i class="fas fa-eye"></i> İZLEDİM</button></div></div></div>
 <script>
+    // ============ TMDB API KEY (POSTER İÇİN) ============
+    const TMDB_API_KEY = "b429c973c6c98439cf6e504e7ffe1678";  // ← BURAYA KENDİ KEY'İNİ YAZ
+    
     let allMovies = [];
     let watchedIds = JSON.parse(localStorage.getItem("watched_film_ids")) || [];
     let currentMovieId = null;
     let currentCategory = "all";
+    let posterCache = {};
+
+    async function getPosterUrl(imdbId, title) {
+        if (posterCache[imdbId]) return posterCache[imdbId];
+        try {
+            // TMDB'de IMDb ID ile ara
+            const searchUrl = `https://api.themoviedb.org/3/find/${imdbId}?api_key=${TMDB_API_KEY}&external_source=imdb_id`;
+            const response = await fetch(searchUrl);
+            const data = await response.json();
+            if (data.movie_results && data.movie_results.length > 0) {
+                const posterPath = data.movie_results[0].poster_path;
+                if (posterPath) {
+                    const url = `https://image.tmdb.org/t/p/w300${posterPath}`;
+                    posterCache[imdbId] = url;
+                    return url;
+                }
+            }
+        } catch(e) { console.log("Poster alınamadı:", imdbId); }
+        return `https://via.placeholder.com/300x450?text=${encodeURIComponent(title)}`;
+    }
 
     async function loadData() {
         try {
@@ -75,16 +99,21 @@
             if (!response.ok) throw new Error('Dosya bulunamadı');
             const data = await response.json();
             allMovies = Object.values(data.movies || []);
-            // Poster URL'leri (TMDB placeholder - gerçek poster için API key gerek)
-            allMovies.forEach(m => { 
-                m.poster = `https://image.tmdb.org/t/p/w500/${m.id.replace('tt', '')}.jpg`; 
+            
+            // Posterleri yükle
+            for (let i = 0; i < allMovies.length; i++) {
+                const m = allMovies[i];
+                m.poster = await getPosterUrl(m.id, m.title);
                 if (m.runtime && m.runtime !== '?' && m.runtime !== '\\N') {
                     const mins = parseInt(m.runtime);
                     m.runtime_display = `${Math.floor(mins/60)}s ${mins%60}dk`;
                 } else {
                     m.runtime_display = "Süre bilgisi yok";
                 }
-            });
+                // Her 20 filmde bir ara ver (API limiti için)
+                if (i % 20 === 0) await new Promise(r => setTimeout(r, 100));
+            }
+            
             allMovies.sort((a,b) => parseFloat(b.imdb) - parseFloat(a.imdb));
             renderCategories();
             renderMovies();
@@ -92,6 +121,7 @@
             document.getElementById("filmGrid").innerHTML = `<div style="text-align:center;padding:3rem;"><i class="fas fa-exclamation-triangle"></i><p>imdb_data.json bulunamadı!<br>Önce Python scriptini çalıştır.</p></div>`;
         }
     }
+    
     function saveWatched(id) { if(!watchedIds.includes(id)) { watchedIds.push(id); localStorage.setItem("watched_film_ids", JSON.stringify(watchedIds)); renderMovies(); if(currentMovieId===id) document.getElementById("modalWatchBtn").innerHTML='<i class="fas fa-check-circle"></i> İZLENDİ'; } }
     function isWatched(id) { return watchedIds.includes(id); }
     function getFiltered() { let movies = [...allMovies]; if(currentCategory!=="all") movies = movies.filter(m=>m.genres && m.genres.includes(currentCategory)); return movies.filter(m=>!isWatched(m.id)); }
