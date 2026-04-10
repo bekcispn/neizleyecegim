@@ -2,28 +2,19 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Abican Sinema | Film & Dizi Seç</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Abican | Film & Dizi</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: 'Poppins', 'Segoe UI', system-ui, sans-serif;
+            font-family: 'Poppins', sans-serif;
             background: radial-gradient(circle at 20% 30%, #0a0f1e, #030712);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            position: relative;
-            overflow-x: hidden;
         }
-
-        /* Loading Screen */
         .loading-screen {
             position: fixed;
             top: 0;
@@ -36,220 +27,76 @@
             justify-content: center;
             align-items: center;
             z-index: 1000;
-            transition: opacity 0.8s ease;
+            transition: opacity 0.8s;
         }
-
         .loader {
             width: 70px;
             height: 70px;
-            border: 4px solid rgba(249, 115, 22, 0.2);
+            border: 4px solid rgba(249,115,22,0.2);
             border-top: 4px solid #f97316;
-            border-right: 4px solid #facc15;
             border-radius: 50%;
-            animation: spin 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
-            box-shadow: 0 0 25px rgba(249, 115, 22, 0.4);
+            animation: spin 0.8s infinite;
         }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .loading-text {
             margin-top: 30px;
             font-size: 1.3rem;
             font-weight: 600;
-            background: linear-gradient(135deg, #f97316, #facc15, #f97316);
-            background-size: 200% auto;
+            background: linear-gradient(135deg, #f97316, #facc15);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            animation: shine 1.5s linear infinite;
         }
-
-        @keyframes shine {
-            0% { background-position: 0% center; }
-            100% { background-position: 200% center; }
-        }
-
-        .loading-sub {
-            margin-top: 12px;
-            color: #64748b;
-            font-size: 0.85rem;
-            letter-spacing: 1px;
-        }
-
-        /* Ana Menü */
         .menu-container {
             display: none;
             text-align: center;
             padding: 2rem;
-            animation: fadeInScale 0.6s ease-out;
+            animation: fadeIn 0.6s;
         }
-
-        @keyframes fadeInScale {
-            from {
-                opacity: 0;
-                transform: scale(0.95);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-
-        .menu-icon {
-            font-size: 4rem;
-            margin-bottom: 1rem;
-            filter: drop-shadow(0 0 15px #f97316);
-        }
-
-        .menu-title {
-            font-size: 2.5rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, #FFD166, #FF6B6B, #f97316);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            margin-bottom: 0.5rem;
-        }
-
-        .menu-sub {
-            color: #94a3b8;
-            margin-bottom: 3rem;
-            font-size: 1rem;
-        }
-
-        .menu-cards {
-            display: flex;
-            justify-content: center;
-            gap: 2.5rem;
-            flex-wrap: wrap;
-        }
-
-        .menu-card {
-            background: linear-gradient(145deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9));
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(249, 115, 22, 0.3);
-            border-radius: 60px;
-            padding: 2rem 3rem;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-            text-align: center;
-            min-width: 240px;
-        }
-
-        .menu-card:hover {
-            transform: translateY(-10px) scale(1.02);
-            border-color: #f97316;
-            box-shadow: 0 25px 40px rgba(249, 115, 22, 0.3);
-            background: linear-gradient(145deg, rgba(249, 115, 22, 0.2), rgba(245, 158, 11, 0.1));
-        }
-
-        .menu-card i {
-            font-size: 3.5rem;
-            margin-bottom: 1rem;
-            color: #facc15;
-        }
-
-        .menu-card h2 {
-            font-size: 1.8rem;
-            color: #fff;
-            margin-bottom: 0.5rem;
-        }
-
-        .menu-card p {
-            color: #94a3b8;
-            font-size: 0.85rem;
-        }
-
-        @media (max-width: 600px) {
-            .menu-card {
-                padding: 1.2rem 1.8rem;
-                min-width: 170px;
-            }
-            .menu-title {
-                font-size: 1.8rem;
-            }
-            .menu-card i {
-                font-size: 2.5rem;
-            }
-            .menu-card h2 {
-                font-size: 1.3rem;
-            }
-        }
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        .menu-title { font-size: 2.5rem; font-weight: 800; background: linear-gradient(135deg, #FFD166, #FF6B6B, #f97316); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .menu-sub { color: #94a3b8; margin-bottom: 3rem; }
+        .menu-cards { display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap; }
+        .menu-card { background: rgba(30,41,59,0.7); backdrop-filter: blur(16px); border: 1px solid rgba(249,115,22,0.3); border-radius: 48px; padding: 2rem 3rem; cursor: pointer; transition: 0.3s; text-align: center; min-width: 220px; }
+        .menu-card:hover { transform: translateY(-10px); border-color: #f97316; background: rgba(249,115,22,0.2); }
+        .menu-card i { font-size: 3rem; color: #facc15; margin-bottom: 1rem; }
+        .menu-card h2 { font-size: 1.8rem; color: #fff; }
+        .menu-card p { color: #94a3b8; font-size: 0.8rem; }
+        @media (max-width: 600px) { .menu-card { padding: 1rem 1.5rem; min-width: 160px; } .menu-title { font-size: 1.8rem; } }
     </style>
 </head>
 <body>
-
 <div class="loading-screen" id="loadingScreen">
     <div class="loader"></div>
     <div class="loading-text" id="loadingMsg">Filmler hazırlanıyor..</div>
-    <div class="loading-sub" id="loadingSub">En iyi yapımlar taranıyor ✨</div>
 </div>
-
 <div class="menu-container" id="menuContainer">
-    <div class="menu-icon">
-        <i class="fas fa-film"></i> <i class="fas fa-tv"></i>
-    </div>
-    <div class="menu-title">Abican'ın Sineması</div>
+    <div class="menu-title">🎬 Abican'ın Sineması</div>
     <div class="menu-sub">Ne izlemek istiyorsun?</div>
     <div class="menu-cards">
-        <div class="menu-card" data-type="filmler">
+        <div class="menu-card" onclick="location.href='filmler.html'">
             <i class="fas fa-film"></i>
             <h2>Filmler</h2>
-            <p><i class="fas fa-star" style="color: #f5c518;"></i> IMDB puanları • Kategoriler • İzlediklerini hatırla</p>
+            <p><i class="fab fa-imdb"></i> IMDb puanları • Kategoriler</p>
         </div>
-        <div class="menu-card" data-type="diziler">
+        <div class="menu-card" onclick="location.href='diziler.html'">
             <i class="fas fa-tv"></i>
             <h2>Diziler</h2>
-            <p><i class="fas fa-star" style="color: #f5c518;"></i> En yüksek puanlılar • Sezon detayları • Takip sistemi</p>
+            <p><i class="fab fa-imdb"></i> En yüksek puanlılar • Takip</p>
         </div>
     </div>
 </div>
-
 <script>
     const loadingScreen = document.getElementById('loadingScreen');
     const loadingMsg = document.getElementById('loadingMsg');
-    const loadingSub = document.getElementById('loadingSub');
-    const menuContainer = document.getElementById('menuContainer');
-    
-    const messages = [
-        "🎬 Filmler hazırlanıyor..",
-        "📺 Diziler taranıyor..",
-        "⭐ IMDB puanları getiriliyor..",
-        "🍿 Abican biraz sabır..",
-        "✨ Son dokunuşlar yapılıyor.."
-    ];
-    
-    let msgIndex = 0;
-    const msgInterval = setInterval(() => {
-        if(msgIndex < messages.length) {
-            loadingMsg.innerHTML = messages[msgIndex];
-            msgIndex++;
-        }
-    }, 600);
-    
+    const messages = ["Filmler hazırlanıyor..", "Diziler taranıyor..", "IMDb puanları getiriliyor..", "Abican biraz sabır.."];
+    let idx = 0;
+    const interval = setInterval(() => { loadingMsg.innerHTML = messages[idx % messages.length]; idx++; if(idx === 5) clearInterval(interval); }, 600);
     setTimeout(() => {
-        clearInterval(msgInterval);
+        clearInterval(interval);
         loadingMsg.innerHTML = "🎉 Hoşgeldin Abican, Filmini Seçmeye Başla.";
-        loadingSub.innerHTML = "Hazırsın! 🚀";
-        
-        setTimeout(() => {
-            loadingScreen.style.opacity = "0";
-            setTimeout(() => {
-                loadingScreen.style.display = "none";
-                menuContainer.style.display = "block";
-            }, 600);
-        }, 1500);
-    }, 2800);
-    
-    document.querySelectorAll('.menu-card').forEach(card => {
-        card.addEventListener('click', () => {
-            const type = card.getAttribute('data-type');
-            window.location.href = type === 'filmler' ? 'filmler.html' : 'diziler.html';
-        });
-    });
+        setTimeout(() => { loadingScreen.style.opacity = "0"; setTimeout(() => { loadingScreen.style.display = "none"; document.getElementById("menuContainer").style.display = "block"; }, 600); }, 1500);
+    }, 2500);
 </script>
 </body>
 </html>

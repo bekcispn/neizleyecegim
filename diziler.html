@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Diziler - IMDb Resmi | Abican</title>
+    <title>Diziler - IMDb | Abican</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Poppins', sans-serif; background: linear-gradient(135deg, #0a0f1e 0%, #030712 100%); color: #f1f5f9; min-height: 100vh; }
+        body { font-family: 'Poppins', sans-serif; background: linear-gradient(135deg, #0a0f1e, #030712); color: #fff; min-height: 100vh; }
         .header { background: rgba(15,25,45,0.95); backdrop-filter: blur(20px); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; border-bottom: 1px solid #f5c518; position: sticky; top: 0; z-index: 100; }
         .logo h1 { font-size: 1.3rem; background: linear-gradient(135deg, #f5c518, #f97316); -webkit-background-clip: text; background-clip: text; color: transparent; }
         .back-btn { background: #1e293b; border: 1px solid #f5c518; padding: 0.5rem 1.2rem; border-radius: 40px; color: #f5c518; cursor: pointer; font-weight: 600; }
         .back-btn:hover { background: #f5c518; color: #0f172a; }
         .category-tabs { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.6rem; margin: 1.5rem 1rem; }
-        .cat-btn { background: #1e293b; padding: 0.5rem 1.2rem; border-radius: 40px; color: #cbd5e1; cursor: pointer; font-size: 0.8rem; }
+        .cat-btn { background: #1e293b; padding: 0.5rem 1.2rem; border-radius: 40px; color: #cbd5e1; cursor: pointer; font-size: 0.8rem; transition: 0.2s; }
         .cat-btn i { margin-right: 6px; }
         .cat-btn.active { background: #f5c518; color: #0f172a; }
         .dizi-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1.5rem; padding: 1rem 1.5rem 2rem; max-width: 1400px; margin: 0 auto; }
@@ -45,7 +45,6 @@
         .loading { text-align: center; padding: 3rem; }
         .loading i { font-size: 2rem; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .region-badge { background: #1e293b; display: inline-block; padding: 0.2rem 0.8rem; border-radius: 20px; font-size: 0.65rem; margin: 0.3rem 0.2rem; }
     </style>
 </head>
 <body>
@@ -53,82 +52,78 @@
     <div class="logo"><h1><i class="fas fa-tv"></i> ABICAN DİZİLER</h1></div>
     <button class="back-btn" onclick="window.location.href='index.html'"><i class="fas fa-arrow-left"></i> Ana Menü</button>
 </div>
-<div style="text-align: center;">
-    <span class="region-badge"><i class="fab fa-imdb"></i> IMDb Resmi Puanlar</span>
-    <span class="region-badge"><i class="fas fa-globe-americas"></i> USA/UK/Europe</span>
-    <span class="region-badge"><i class="fas fa-ban"></i> Türk/Asya/Anime yok</span>
-    <span class="region-badge"><i class="fas fa-image"></i> TMDB Poster</span>
-</div>
 <div class="category-tabs" id="categoryContainer"></div>
 <div class="stats" id="stats"></div>
 <div class="dizi-grid" id="diziGrid"><div class="loading"><i class="fas fa-spinner fa-spin"></i><br>Diziler yükleniyor...</div></div>
-<div class="footer"><i class="fab fa-imdb"></i> IMDb Resmi Veri Seti • <i class="fas fa-check-circle"></i> İzlediklerin kaybolur</div>
+<div class="footer"><i class="fab fa-imdb"></i> IMDb Resmi Puanlar • <i class="fas fa-check-circle"></i> İzlediklerin kaybolur</div>
 <div id="modal" class="modal"><div class="modal-content"><div class="modal-header"><img id="modalPoster" class="modal-poster" src=""><button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button></div><div class="modal-body"><h2 class="modal-title" id="modalTitle"></h2><div class="modal-meta"><span class="modal-imdb" id="modalImdb"></span><span class="modal-year" id="modalYear"></span><span class="modal-seasons" id="modalSeasons"></span></div><div class="modal-plot"><h4><i class="fas fa-align-left"></i> Konusu</h4><p id="modalPlot"></p></div><button class="modal-watch-btn" id="modalWatchBtn"><i class="fas fa-eye"></i> İZLEDİM</button></div></div></div>
 <script>
-    // ============ TMDB API KEY (POSTER İÇİN) ============
-    const TMDB_API_KEY = "b429c973c6c98439cf6e504e7ffe1678";  // ← BURAYA KENDİ KEY'İNİ YAZ
-    
+    const TMDB_API_KEY = "b429c973c6c98439cf6e504e7ffe1678";
     let allSeries = [];
     let watchedIds = JSON.parse(localStorage.getItem("watched_tv_ids")) || [];
     let currentSeriesId = null;
     let currentCategory = "all";
-    let posterCache = {};
-
-    async function getPosterUrl(imdbId, title) {
-        if (posterCache[imdbId]) return posterCache[imdbId];
-        try {
-            const searchUrl = `https://api.themoviedb.org/3/find/${imdbId}?api_key=${TMDB_API_KEY}&external_source=imdb_id`;
-            const response = await fetch(searchUrl);
-            const data = await response.json();
-            if (data.tv_results && data.tv_results.length > 0) {
-                const posterPath = data.tv_results[0].poster_path;
-                if (posterPath) {
-                    const url = `https://image.tmdb.org/t/p/w300${posterPath}`;
-                    posterCache[imdbId] = url;
-                    return url;
-                }
-            }
-        } catch(e) { console.log("Poster alınamadı:", imdbId); }
-        return `https://via.placeholder.com/300x450?text=${encodeURIComponent(title)}`;
-    }
 
     async function loadData() {
         try {
             const response = await fetch('imdb_data.json');
-            if (!response.ok) throw new Error('Dosya bulunamadı');
+            if (!response.ok) throw new Error();
             const data = await response.json();
-            allSeries = Object.values(data.series || []);
+            allSeries = data.series || [];
             
             for (let i = 0; i < allSeries.length; i++) {
                 const s = allSeries[i];
-                s.poster = await getPosterUrl(s.id, s.title);
-                if (i % 20 === 0) await new Promise(r => setTimeout(r, 100));
+                try {
+                    const searchUrl = `https://api.themoviedb.org/3/find/${s.id}?api_key=${TMDB_API_KEY}&external_source=imdb_id`;
+                    const posterRes = await fetch(searchUrl);
+                    const posterData = await posterRes.json();
+                    if (posterData.tv_results && posterData.tv_results.length > 0) {
+                        const posterPath = posterData.tv_results[0].poster_path;
+                        s.poster = posterPath ? `https://image.tmdb.org/t/p/w300${posterPath}` : `https://via.placeholder.com/300x450?text=${encodeURIComponent(s.title)}`;
+                    } else {
+                        s.poster = `https://via.placeholder.com/300x450?text=${encodeURIComponent(s.title)}`;
+                    }
+                } catch(e) {
+                    s.poster = `https://via.placeholder.com/300x450?text=${encodeURIComponent(s.title)}`;
+                }
+                if (i % 10 === 0) await new Promise(r => setTimeout(r, 50));
             }
             
             allSeries.sort((a,b) => parseFloat(b.imdb) - parseFloat(a.imdb));
             renderCategories();
             renderSeries();
         } catch(err) { 
-            document.getElementById("diziGrid").innerHTML = `<div style="text-align:center;padding:3rem;"><i class="fas fa-exclamation-triangle"></i><p>imdb_data.json bulunamadı!<br>Önce Python scriptini çalıştır.</p></div>`;
+            document.getElementById("diziGrid").innerHTML = `<div style="text-align:center;padding:3rem;"><i class="fas fa-exclamation-triangle"></i><p>imdb_data.json bulunamadı!</p></div>`;
         }
     }
     
-    function saveWatched(id) { if(!watchedIds.includes(id)) { watchedIds.push(id); localStorage.setItem("watched_tv_ids", JSON.stringify(watchedIds)); renderSeries(); if(currentSeriesId===id) document.getElementById("modalWatchBtn").innerHTML='<i class="fas fa-check-circle"></i> İZLENDİ'; } }
+    function saveWatched(id) { 
+        if(!watchedIds.includes(id)) { 
+            watchedIds.push(id); 
+            localStorage.setItem("watched_tv_ids", JSON.stringify(watchedIds)); 
+            renderSeries(); 
+            if(currentSeriesId === id) document.getElementById("modalWatchBtn").innerHTML = '<i class="fas fa-check-circle"></i> İZLENDİ'; 
+        } 
+    }
     function isWatched(id) { return watchedIds.includes(id); }
-    function getFiltered() { let series = [...allSeries]; if(currentCategory!=="all") series = series.filter(s=>s.genres && s.genres.includes(currentCategory)); return series.filter(s=>!isWatched(s.id)); }
+    function getFiltered() { 
+        let series = [...allSeries]; 
+        if(currentCategory !== "all") series = series.filter(s => s.genre && s.genre.includes(currentCategory));
+        return series.filter(s => !isWatched(s.id)); 
+    }
     function renderSeries() {
         const series = getFiltered();
-        document.getElementById("stats").innerHTML = `<i class="fab fa-imdb"></i> ${series.length} / ${allSeries.length} dizi | Sadece USA/UK/Europe`;
-        if(series.length===0) { document.getElementById("diziGrid").innerHTML = `<div style="text-align:center;padding:3rem;"><i class="fas fa-trophy"></i><p>🎉 Tüm dizileri izledin!</p></div>`; return; }
-        document.getElementById("diziGrid").innerHTML = series.map(s => `<div class="dizi-card" data-id="${s.id}"><img class="poster" src="${s.poster}" onerror="this.src='https://via.placeholder.com/300x450?text=${encodeURIComponent(s.title)}'"><div class="info"><div class="title">${s.title.length>25?s.title.substring(0,22)+'...':s.title}</div><div class="imdb"><i class="fab fa-imdb"></i> ${s.imdb}</div><div class="year"><i class="far fa-calendar-alt"></i> ${s.year}</div><button class="watched-btn ${isWatched(s.id)?'watched':''}" data-id="${s.id}">${isWatched(s.id)?'<i class="fas fa-check-circle"></i> İZLENDİ':'<i class="fas fa-eye"></i> İZLEDİM'}</button></div></div>`).join('');
-        document.querySelectorAll('.dizi-card').forEach(card => { card.addEventListener('click', (e) => { if(e.target.classList.contains('watched-btn')) return; const serie = allSeries.find(s=>s.id===card.dataset.id); if(serie) openModal(serie); }); });
+        document.getElementById("stats").innerHTML = `<i class="fab fa-imdb"></i> ${series.length} / ${allSeries.length} dizi`;
+        if(series.length === 0) { document.getElementById("diziGrid").innerHTML = `<div style="text-align:center;padding:3rem;"><i class="fas fa-trophy"></i><p>🎉 Tüm dizileri izledin!</p></div>`; return; }
+        document.getElementById("diziGrid").innerHTML = series.map(s => `<div class="dizi-card" data-id="${s.id}"><img class="poster" src="${s.poster}" onerror="this.src='https://via.placeholder.com/300x450?text=${encodeURIComponent(s.title)}'"><div class="info"><div class="title">${s.title.length > 25 ? s.title.substring(0,22)+'...' : s.title}</div><div class="imdb"><i class="fab fa-imdb"></i> ${s.imdb}</div><div class="year"><i class="far fa-calendar-alt"></i> ${s.year}</div><button class="watched-btn ${isWatched(s.id) ? 'watched' : ''}" data-id="${s.id}">${isWatched(s.id) ? '<i class="fas fa-check-circle"></i> İZLENDİ' : '<i class="fas fa-eye"></i> İZLEDİM'}</button></div></div>`).join('');
+        document.querySelectorAll('.dizi-card').forEach(card => { card.addEventListener('click', (e) => { if(e.target.classList.contains('watched-btn')) return; const serie = allSeries.find(s => s.id === card.dataset.id); if(serie) openModal(serie); }); });
         document.querySelectorAll('.watched-btn:not(.watched)').forEach(btn => { btn.addEventListener('click', (e) => { e.stopPropagation(); saveWatched(btn.dataset.id); renderSeries(); }); });
     }
-    function openModal(s) { currentSeriesId=s.id; document.getElementById("modalPoster").src=s.poster; document.getElementById("modalTitle").innerHTML=s.title; document.getElementById("modalImdb").innerHTML=`<i class="fab fa-imdb"></i> ${s.imdb}`; document.getElementById("modalYear").innerHTML=`<i class="far fa-calendar-alt"></i> ${s.year}`; document.getElementById("modalSeasons").innerHTML=`<i class="fas fa-layer-group"></i> ${s.runtime || 'Sezon bilgisi yok'}`; document.getElementById("modalPlot").innerHTML=s.plot; document.getElementById("modalWatchBtn").innerHTML=isWatched(s.id)?'<i class="fas fa-check-circle"></i> İZLENDİ':'<i class="fas fa-eye"></i> İZLEDİM'; document.getElementById("modal").style.display="flex"; }
-    function closeModal() { document.getElementById("modal").style.display="none"; currentSeriesId=null; }
-    function renderCategories() { const cats=["all","Action","Comedy","Drama","Crime","Sci-Fi","Thriller","Fantasy","Mystery","Romance"]; document.getElementById("categoryContainer").innerHTML=cats.map(c=>`<button class="cat-btn ${currentCategory===c?'active':''}" data-cat="${c}"><i class="fas ${c==='all'?'fa-border-all':c==='Action'?'fa-fist-raised':c==='Drama'?'fa-mask':c==='Comedy'?'fa-laugh':c==='Sci-Fi'?'fa-rocket':'fa-tag'}"></i> ${c==='all'?'Tümü':c}</button>`).join(''); document.querySelectorAll('.cat-btn').forEach(btn=>{btn.addEventListener('click',()=>{currentCategory=btn.dataset.cat;renderCategories();renderSeries();});}); }
-    window.onclick = function(e) { if(e.target===document.getElementById("modal")) closeModal(); }
-    document.getElementById("modalWatchBtn").addEventListener("click",()=>{if(currentSeriesId && !isWatched(currentSeriesId)) saveWatched(currentSeriesId);});
+    function openModal(s) { currentSeriesId = s.id; document.getElementById("modalPoster").src = s.poster; document.getElementById("modalTitle").innerHTML = s.title; document.getElementById("modalImdb").innerHTML = `<i class="fab fa-imdb"></i> ${s.imdb}`; document.getElementById("modalYear").innerHTML = `<i class="far fa-calendar-alt"></i> ${s.year}`; document.getElementById("modalSeasons").innerHTML = `<i class="fas fa-layer-group"></i> ${s.runtime || 'Sezon yok'}`; document.getElementById("modalPlot").innerHTML = s.plot || "Konu bilgisi yok"; document.getElementById("modalWatchBtn").innerHTML = isWatched(s.id) ? '<i class="fas fa-check-circle"></i> İZLENDİ' : '<i class="fas fa-eye"></i> İZLEDİM'; document.getElementById("modal").style.display = "flex"; }
+    function closeModal() { document.getElementById("modal").style.display = "none"; currentSeriesId = null; }
+    function renderCategories() { const cats = ["all", "Action", "Comedy", "Drama", "Crime", "Sci-Fi", "Thriller"]; document.getElementById("categoryContainer").innerHTML = cats.map(c => `<button class="cat-btn ${currentCategory === c ? 'active' : ''}" data-cat="${c}"><i class="fas ${c === 'all' ? 'fa-border-all' : c === 'Action' ? 'fa-fist-raised' : c === 'Drama' ? 'fa-mask' : c === 'Comedy' ? 'fa-laugh' : c === 'Sci-Fi' ? 'fa-rocket' : 'fa-tag'}"></i> ${c === 'all' ? 'Tümü' : c}</button>`).join(''); document.querySelectorAll('.cat-btn').forEach(btn => { btn.addEventListener('click', () => { currentCategory = btn.dataset.cat; renderCategories(); renderSeries(); }); }); }
+    window.onclick = function(e) { if(e.target === document.getElementById("modal")) closeModal(); }
+    document.getElementById("modalWatchBtn").addEventListener("click", () => { if(currentSeriesId && !isWatched(currentSeriesId)) saveWatched(currentSeriesId); });
     loadData();
 </script>
 </body>
