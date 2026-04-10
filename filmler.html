@@ -3,180 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Filmler - En İyi Puanlılar | Abican</title>
+    <title>Filmler - Gerçek IMDB Puanlı | Abican</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: 'Poppins', 'Segoe UI', system-ui, sans-serif;
-            background: linear-gradient(135deg, #0a0f1e 0%, #030712 100%);
-            color: #f1f5f9;
-            min-height: 100vh;
-        }
-        .header {
-            background: rgba(15, 25, 45, 0.95);
-            backdrop-filter: blur(20px);
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
-            border-bottom: 1px solid rgba(245, 197, 24, 0.3);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-        .logo h1 {
-            font-size: 1.3rem;
-            background: linear-gradient(135deg, #f5c518, #f97316);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Poppins', 'Segoe UI', sans-serif; background: linear-gradient(135deg, #0a0f1e 0%, #030712 100%); color: #f1f5f9; min-height: 100vh; }
+        .header { background: rgba(15, 25, 45, 0.95); backdrop-filter: blur(20px); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; border-bottom: 1px solid rgba(245, 197, 24, 0.3); position: sticky; top: 0; z-index: 100; }
+        .logo h1 { font-size: 1.3rem; background: linear-gradient(135deg, #f5c518, #f97316); -webkit-background-clip: text; background-clip: text; color: transparent; }
         .logo i { color: #f5c518; margin-right: 8px; }
-        .back-btn, .load-more-btn {
-            background: rgba(30, 41, 59, 0.8);
-            border: 1px solid rgba(245, 197, 24, 0.3);
-            padding: 0.5rem 1.2rem;
-            border-radius: 40px;
-            color: #f5c518;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.2s;
-        }
+        .back-btn, .load-more-btn { background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(245, 197, 24, 0.3); padding: 0.5rem 1.2rem; border-radius: 40px; color: #f5c518; cursor: pointer; font-weight: 600; transition: all 0.2s; }
         .back-btn:hover, .load-more-btn:hover { background: #f5c518; color: #0f172a; }
-        .sort-tabs {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            margin: 1.5rem 1rem 0.5rem;
-        }
-        .sort-btn {
-            background: rgba(30, 41, 59, 0.7);
-            border: 1px solid rgba(245, 197, 24, 0.3);
-            padding: 0.6rem 1.8rem;
-            border-radius: 40px;
-            color: #cbd5e1;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
+        .sort-tabs { display: flex; justify-content: center; gap: 1rem; margin: 1.5rem 1rem 0.5rem; }
+        .sort-btn { background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(245, 197, 24, 0.3); padding: 0.6rem 1.8rem; border-radius: 40px; color: #cbd5e1; font-weight: 600; cursor: pointer; transition: all 0.2s; }
         .sort-btn.active { background: #f5c518; color: #0f172a; }
-        .category-tabs {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 0.6rem;
-            margin: 1rem 1rem 1.5rem;
-        }
-        .cat-btn {
-            background: rgba(30, 41, 59, 0.7);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 0.4rem 1rem;
-            border-radius: 40px;
-            color: #cbd5e1;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-size: 0.75rem;
-        }
+        .category-tabs { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.6rem; margin: 1rem 1rem 1.5rem; }
+        .cat-btn { background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(255,255,255,0.1); padding: 0.4rem 1rem; border-radius: 40px; color: #cbd5e1; font-weight: 500; cursor: pointer; transition: all 0.2s; font-size: 0.75rem; }
         .cat-btn i { margin-right: 5px; }
         .cat-btn.active { background: #f5c518; color: #0f172a; }
-        .film-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
-            gap: 1.5rem;
-            padding: 1rem 1.5rem 2rem;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-        .film-card {
-            background: rgba(17, 24, 39, 0.7);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            overflow: hidden;
-            border: 1px solid rgba(245, 197, 24, 0.15);
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
+        .film-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 1.5rem; padding: 1rem 1.5rem 2rem; max-width: 1400px; margin: 0 auto; }
+        .film-card { background: rgba(17, 24, 39, 0.7); backdrop-filter: blur(10px); border-radius: 20px; overflow: hidden; border: 1px solid rgba(245, 197, 24, 0.15); transition: all 0.3s ease; cursor: pointer; }
         .film-card:hover { transform: translateY(-6px); border-color: #f5c518; box-shadow: 0 15px 30px rgba(0,0,0,0.4); }
         .poster { width: 100%; height: 280px; object-fit: cover; background: linear-gradient(135deg, #1e293b, #0f172a); }
         .info { padding: 0.8rem; }
         .title { font-weight: 600; font-size: 0.85rem; margin-bottom: 0.3rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .imdb {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            background: #f5c518;
-            color: #000;
-            font-weight: bold;
-            padding: 0.15rem 0.5rem;
-            border-radius: 20px;
-            font-size: 0.65rem;
-            margin: 0.4rem 0;
-        }
+        .imdb { display: inline-flex; align-items: center; gap: 4px; background: #f5c518; color: #000; font-weight: bold; padding: 0.15rem 0.5rem; border-radius: 20px; font-size: 0.65rem; margin: 0.4rem 0; }
         .year { font-size: 0.65rem; color: #94a3b8; }
-        .watched-btn {
-            background: rgba(45, 58, 78, 0.8);
-            border: none;
-            color: #f5c518;
-            padding: 0.35rem;
-            border-radius: 30px;
-            font-size: 0.65rem;
-            font-weight: 600;
-            margin-top: 0.5rem;
-            width: 100%;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 5px;
-        }
+        .watched-btn { background: rgba(45, 58, 78, 0.8); border: none; color: #f5c518; padding: 0.35rem; border-radius: 30px; font-size: 0.65rem; font-weight: 600; margin-top: 0.5rem; width: 100%; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 5px; }
         .watched-btn.watched { background: #10b981; color: white; cursor: default; }
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.95);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-        .modal-content {
-            background: linear-gradient(135deg, #1e293b, #0f172a);
-            border-radius: 30px;
-            max-width: 500px;
-            width: 90%;
-            max-height: 85vh;
-            overflow-y: auto;
-            border: 1px solid rgba(245, 197, 24, 0.3);
-            animation: slideUp 0.3s ease;
-        }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.95); z-index: 1000; justify-content: center; align-items: center; }
+        .modal-content { background: linear-gradient(135deg, #1e293b, #0f172a); border-radius: 30px; max-width: 500px; width: 90%; max-height: 85vh; overflow-y: auto; border: 1px solid rgba(245, 197, 24, 0.3); animation: slideUp 0.3s ease; }
         @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         .modal-header { position: relative; }
         .modal-poster { width: 100%; height: 350px; object-fit: cover; border-radius: 30px 30px 0 0; }
-        .modal-close {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: rgba(0, 0, 0, 0.6);
-            border: none;
-            color: white;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            font-size: 1.2rem;
-            cursor: pointer;
-        }
+        .modal-close { position: absolute; top: 15px; right: 15px; background: rgba(0,0,0,0.6); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; font-size: 1.2rem; cursor: pointer; }
         .modal-close:hover { background: #f97316; }
         .modal-body { padding: 1.5rem; }
         .modal-title { font-size: 1.3rem; font-weight: 700; }
@@ -198,18 +57,18 @@
 <body>
 
 <div class="header">
-    <div class="logo"><h1><i class="fas fa-film"></i> ABICAN FİLMLER | ⭐ IMDB Tarzı</h1></div>
+    <div class="logo"><h1><i class="fas fa-film"></i> ABICAN FİLMLER | GERÇEK IMDB</h1></div>
     <button class="back-btn" onclick="window.location.href='index.html'"><i class="fas fa-arrow-left"></i> Ana Menü</button>
 </div>
 
 <div style="text-align: center; margin-top: 0.5rem;">
-    <span class="region-badge"><i class="fab fa-imdb"></i> Puanlar IMDB stili</span>
+    <span class="region-badge"><i class="fab fa-imdb"></i> Gerçek IMDB Puanları</span>
     <span class="region-badge"><i class="fas fa-globe-americas"></i> USA / UK / Europe</span>
     <span class="region-badge"><i class="fas fa-ban"></i> Anime / Kore / Çin yok</span>
 </div>
 
 <div class="sort-tabs">
-    <button class="sort-btn active" data-sort="top_rated"><i class="fas fa-star"></i> En Yüksek Puanlılar</button>
+    <button class="sort-btn active" data-sort="top_rated"><i class="fas fa-star"></i> En Yüksek IMDB Puanlı</button>
     <button class="sort-btn" data-sort="popular"><i class="fas fa-fire"></i> Günlük Popüler</button>
 </div>
 
@@ -218,7 +77,7 @@
 <div class="film-grid" id="filmGrid"></div>
 <div class="load-more-container" id="loadMoreContainer"></div>
 <div class="footer">
-    <i class="fab fa-imdb" style="color: #f5c518;"></i> Puanlar TMDB'den • 
+    <i class="fab fa-imdb" style="color: #f5c518;"></i> IMDB'den gerçek puanlar • 
     <i class="fas fa-check-circle" style="color: #10b981;"></i> İzlediklerin kaybolur
 </div>
 
@@ -242,11 +101,14 @@
 </div>
 
 <script>
+    // ============ API KEY'LERİNİ BURAYA GİR ============
     const TMDB_API_KEY = "b429c973c6c98439cf6e504e7ffe1678";
+    const OMDB_API_KEY = "a4e0ca0c";
+    
     const TMDB_BASE_URL = "https://api.themoviedb.org/3";
+    const OMDB_BASE_URL = "https://www.omdbapi.com/";
     const IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500";
 
-    // SADECE BATI ÜLKELERİ (JAPON/KORE/ÇİN YOK)
     const WESTERN_COUNTRIES = ["US", "GB", "FR", "DE", "IT", "ES", "NL", "BE", "SE", "NO", "DK", "FI", "PL", "AT", "CH", "IE", "PT", "GR", "CZ", "HU", "CA", "AU", "NZ"];
     
     let currentSort = "top_rated";
@@ -273,6 +135,44 @@
     }
     function isWatched(id) { return watchedIds.includes(id); }
 
+    // OMDb'den GERÇEK IMDB puanı al
+    async function fetchOMDbRating(imdbId, title, year) {
+        // Önce IMDB ID ile dene
+        if(imdbId) {
+            try {
+                const url = `${OMDB_BASE_URL}?apikey=${OMDB_API_KEY}&i=${imdbId}`;
+                const response = await fetch(url);
+                const data = await response.json();
+                if(data.Response === "True" && data.imdbRating && data.imdbRating !== "N/A") {
+                    return {
+                        rating: data.imdbRating,
+                        runtime: data.Runtime !== "N/A" ? data.Runtime : null,
+                        plot: data.Plot !== "N/A" ? data.Plot : null,
+                        year: data.Year !== "N/A" ? data.Year.split('–')[0] : null
+                    };
+                }
+            } catch(e) {}
+        }
+        
+        // IMDB ID yoksa veya bulunamadıysa başlık ile ara
+        if(title) {
+            try {
+                const searchUrl = `${OMDB_BASE_URL}?apikey=${OMDB_API_KEY}&t=${encodeURIComponent(title)}&y=${year || ""}`;
+                const response = await fetch(searchUrl);
+                const data = await response.json();
+                if(data.Response === "True" && data.imdbRating && data.imdbRating !== "N/A") {
+                    return {
+                        rating: data.imdbRating,
+                        runtime: data.Runtime !== "N/A" ? data.Runtime : null,
+                        plot: data.Plot !== "N/A" ? data.Plot : null,
+                        year: data.Year !== "N/A" ? data.Year.split('–')[0] : null
+                    };
+                }
+            } catch(e) {}
+        }
+        return null;
+    }
+
     async function fetchMovies(page = 1, append = true) {
         isLoading = true;
         showLoading();
@@ -295,31 +195,44 @@
                     const detailResponse = await fetch(detailUrl);
                     const detailData = await detailResponse.json();
                     
-                    // Anime/Japan/Kore/Çin filtreleme
+                    // Anime/Asya filtreleme
                     const isAnime = movie.genre_ids && movie.genre_ids.includes(16);
                     const originCountry = detailData.production_countries || [];
                     const isWestern = originCountry.some(c => WESTERN_COUNTRIES.includes(c.iso_3166_1));
                     const originalLanguage = detailData.original_language;
                     const isAsian = ["ja", "ko", "zh", "hi", "ta", "te"].includes(originalLanguage);
                     
-                    // Anime ise atla (max 0)
                     if(isAnime) continue;
-                    // Asya yapımı ise atla
                     if(isAsian) continue;
-                    // Batı ülkesi değilse atla
                     if(!isWestern) continue;
                     
-                    const imdbScore = movie.vote_average ? movie.vote_average.toFixed(1) : "?.?";
+                    // OMDb'den GERÇEK IMDB puanını al
+                    let omdbData = null;
+                    if(detailData.imdb_id) {
+                        omdbData = await fetchOMDbRating(detailData.imdb_id, movie.title, movie.release_date?.split('-')[0]);
+                    }
+                    if(!omdbData) {
+                        omdbData = await fetchOMDbRating(null, movie.title, movie.release_date?.split('-')[0]);
+                    }
+                    
+                    // IMDB puanı: OMDb'den geldiyse onu kullan, yoksa TMDB puanını yedek olarak göster
+                    let imdbScore = omdbData?.rating || (movie.vote_average ? movie.vote_average.toFixed(1) : "?.?");
+                    let runtime = omdbData?.runtime || (detailData.runtime ? `${Math.floor(detailData.runtime / 60)}s ${detailData.runtime % 60}dk` : "Süre yok");
+                    let plot = omdbData?.plot || detailData.overview || "Konu bilgisi bulunamadı.";
+                    let year = omdbData?.year || (movie.release_date ? movie.release_date.split('-')[0] : "?");
                     
                     detailedMovies.push({
                         id: movie.id,
                         title: movie.title,
                         poster: movie.poster_path ? `${IMAGE_BASE_URL}${movie.poster_path}` : null,
-                        year: movie.release_date ? movie.release_date.split('-')[0] : "?",
+                        year: year,
                         imdb: imdbScore,
-                        runtime: detailData.runtime ? `${Math.floor(detailData.runtime / 60)}s ${detailData.runtime % 60}dk` : "?",
-                        plot: detailData.overview || "Konu bilgisi bulunamadı."
+                        runtime: runtime,
+                        plot: plot
                     });
+                    
+                    // Rate limiting - OMDb limitini aşmamak için bekle
+                    await new Promise(r => setTimeout(r, 800));
                 }
                 
                 if(append) {
@@ -333,18 +246,18 @@
             } else hasMore = false;
         } catch(error) {
             console.error("API hatası:", error);
-            document.getElementById("filmGrid").innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:3rem;"><i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #f97316;"></i><p style="margin-top: 1rem;">API hatası! API Key'inizi kontrol edin.</p></div>`;
+            document.getElementById("filmGrid").innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:3rem;"><i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #f97316;"></i><p style="margin-top: 1rem;">API hatası! API Key'lerinizi kontrol edin.</p></div>`;
         }
         isLoading = false;
         hideLoading();
         renderMovies();
     }
 
-    function showLoading() { document.getElementById("loadMoreContainer").innerHTML = '<div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> Filmler yükleniyor...</div>'; }
+    function showLoading() { document.getElementById("loadMoreContainer").innerHTML = '<div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> Filmler yükleniyor (IMDB puanları alınıyor)...</div>'; }
     function hideLoading() {
         const container = document.getElementById("loadMoreContainer");
         if(hasMore && !isLoading && allMovies.length < 600) container.innerHTML = '<button class="load-more-btn" onclick="loadMore()"><i class="fas fa-arrow-down"></i> Daha Fazla Film Yükle</button>';
-        else if(!hasMore || allMovies.length >= 600) container.innerHTML = `<p style="color: #475569;"><i class="fas fa-check-circle"></i> ${allMovies.length} film yüklendi! (Sadece Batı yapımı)</p>`;
+        else if(!hasMore || allMovies.length >= 600) container.innerHTML = `<p style="color: #475569;"><i class="fas fa-check-circle"></i> ${allMovies.length} film yüklendi! (Gerçek IMDB puanları ile)</p>`;
         else container.innerHTML = '';
     }
     function loadMore() { if(!isLoading && hasMore && allMovies.length < 600) fetchMovies(currentPage + 1, true); }
@@ -352,7 +265,7 @@
     function renderMovies() {
         const grid = document.getElementById("filmGrid");
         let filteredMovies = allMovies.filter(m => !isWatched(m.id));
-        document.getElementById("stats").innerHTML = `<i class="fab fa-imdb"></i> Toplam ${filteredMovies.length} / ${allMovies.length} film gösteriliyor | ⭐ Puanlara göre sıralı`;
+        document.getElementById("stats").innerHTML = `<i class="fab fa-imdb"></i> Toplam ${filteredMovies.length} / ${allMovies.length} film | ⭐ Gerçek IMDB puanları`;
         if(filteredMovies.length === 0 && allMovies.length > 0) { grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:3rem;"><i class="fas fa-trophy" style="font-size: 3rem; color: #f5c518;"></i><p style="margin-top: 1rem;">🎉 Tüm filmleri izledin!</p></div>`; return; }
         if(allMovies.length === 0 && !isLoading) { grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:3rem;"><i class="fas fa-spinner fa-spin" style="font-size: 3rem; color: #f5c518;"></i><p style="margin-top: 1rem;">Filmler yükleniyor...</p></div>`; return; }
         grid.innerHTML = "";
