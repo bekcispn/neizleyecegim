@@ -3,73 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Filmler - IMDb Resmi Puanlar | Abican</title>
+    <title>Filmler - IMDb Resmi | Abican</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Poppins', 'Segoe UI', sans-serif; background: linear-gradient(135deg, #0a0f1e 0%, #030712 100%); color: #f1f5f9; min-height: 100vh; }
-        .header { background: rgba(15, 25, 45, 0.95); backdrop-filter: blur(20px); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; border-bottom: 1px solid #f5c518; position: sticky; top: 0; z-index: 100; }
+        body { font-family: 'Poppins', sans-serif; background: linear-gradient(135deg, #0a0f1e 0%, #030712 100%); color: #f1f5f9; min-height: 100vh; }
+        .header { background: rgba(15,25,45,0.95); backdrop-filter: blur(20px); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; border-bottom: 1px solid #f5c518; position: sticky; top: 0; z-index: 100; }
         .logo h1 { font-size: 1.3rem; background: linear-gradient(135deg, #f5c518, #f97316); -webkit-background-clip: text; background-clip: text; color: transparent; }
-        .logo i { color: #f5c518; margin-right: 8px; }
-        .back-btn { background: rgba(30, 41, 59, 0.8); border: 1px solid #f5c518; padding: 0.5rem 1.2rem; border-radius: 40px; color: #f5c518; cursor: pointer; font-weight: 600; transition: all 0.2s; }
-        .back-btn:hover { background: #f5c518; color: #0f172a; transform: scale(1.02); }
+        .back-btn { background: #1e293b; border: 1px solid #f5c518; padding: 0.5rem 1.2rem; border-radius: 40px; color: #f5c518; cursor: pointer; font-weight: 600; }
+        .back-btn:hover { background: #f5c518; color: #0f172a; }
         .category-tabs { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.6rem; margin: 1.5rem 1rem; }
-        .cat-btn { background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(255,255,255,0.1); padding: 0.5rem 1.2rem; border-radius: 40px; color: #cbd5e1; font-weight: 500; cursor: pointer; transition: all 0.2s; font-size: 0.8rem; }
+        .cat-btn { background: #1e293b; padding: 0.5rem 1.2rem; border-radius: 40px; color: #cbd5e1; cursor: pointer; font-size: 0.8rem; }
         .cat-btn i { margin-right: 6px; }
-        .cat-btn.active { background: #f5c518; color: #0f172a; border-color: #f5c518; }
-        .film-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.5rem; padding: 1rem 1.5rem 2rem; max-width: 1400px; margin: 0 auto; }
-        .film-card { background: rgba(17, 24, 39, 0.7); backdrop-filter: blur(10px); border-radius: 20px; overflow: hidden; border: 1px solid rgba(245,197,24,0.15); transition: all 0.3s ease; cursor: pointer; }
-        .film-card:hover { transform: translateY(-6px); border-color: #f5c518; box-shadow: 0 15px 30px rgba(0,0,0,0.4); }
-        .poster { width: 100%; height: 300px; object-fit: cover; background: linear-gradient(135deg, #1e293b, #0f172a); }
-        .info { padding: 0.9rem; }
-        .title { font-weight: 600; font-size: 0.9rem; margin-bottom: 0.3rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .imdb { display: inline-flex; align-items: center; gap: 4px; background: #f5c518; color: #000; font-weight: bold; padding: 0.2rem 0.6rem; border-radius: 20px; font-size: 0.7rem; margin: 0.5rem 0; }
-        .year { font-size: 0.7rem; color: #94a3b8; margin: 6px 0; }
-        .watched-btn { background: rgba(45, 58, 78, 0.8); border: none; color: #f5c518; padding: 0.4rem; border-radius: 30px; font-size: 0.7rem; font-weight: 600; margin-top: 0.6rem; width: 100%; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px; }
-        .watched-btn.watched { background: #10b981; color: white; cursor: default; opacity: 0.8; }
+        .cat-btn.active { background: #f5c518; color: #0f172a; }
+        .film-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1.5rem; padding: 1rem 1.5rem 2rem; max-width: 1400px; margin: 0 auto; }
+        .film-card { background: rgba(17,24,39,0.7); backdrop-filter: blur(10px); border-radius: 16px; overflow: hidden; border: 1px solid rgba(245,197,24,0.15); transition: 0.3s; cursor: pointer; }
+        .film-card:hover { transform: translateY(-6px); border-color: #f5c518; }
+        .poster { width: 100%; height: 280px; object-fit: cover; background: #1e293b; }
+        .info { padding: 0.8rem; }
+        .title { font-weight: 600; font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .imdb { display: inline-flex; align-items: center; gap: 4px; background: #f5c518; color: #000; font-weight: bold; padding: 0.15rem 0.5rem; border-radius: 20px; font-size: 0.65rem; margin: 0.4rem 0; }
+        .year { font-size: 0.65rem; color: #94a3b8; }
+        .watched-btn { background: #2d3a4e; border: none; color: #f5c518; padding: 0.35rem; border-radius: 30px; font-size: 0.65rem; font-weight: 600; margin-top: 0.5rem; width: 100%; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; }
+        .watched-btn.watched { background: #10b981; color: white; cursor: default; }
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 1000; justify-content: center; align-items: center; }
-        .modal-content { background: linear-gradient(135deg, #1e293b, #0f172a); border-radius: 30px; max-width: 500px; width: 90%; max-height: 85vh; overflow-y: auto; border: 1px solid #f5c518; animation: slideUp 0.3s ease; }
-        @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .modal-content { background: linear-gradient(135deg, #1e293b, #0f172a); border-radius: 24px; max-width: 500px; width: 90%; max-height: 85vh; overflow-y: auto; border: 1px solid #f5c518; }
         .modal-header { position: relative; }
-        .modal-poster { width: 100%; height: 350px; object-fit: cover; background: #1e293b; border-radius: 30px 30px 0 0; }
-        .modal-close { position: absolute; top: 15px; right: 15px; background: rgba(0,0,0,0.6); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; font-size: 1.2rem; cursor: pointer; transition: all 0.2s; }
-        .modal-close:hover { background: #f97316; transform: scale(1.1); }
+        .modal-poster { width: 100%; height: 350px; object-fit: cover; border-radius: 24px 24px 0 0; }
+        .modal-close { position: absolute; top: 15px; right: 15px; background: rgba(0,0,0,0.6); border: none; color: white; width: 36px; height: 36px; border-radius: 50%; font-size: 1rem; cursor: pointer; }
+        .modal-close:hover { background: #f97316; }
         .modal-body { padding: 1.5rem; }
-        .modal-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem; }
-        .modal-meta { display: flex; gap: 0.8rem; flex-wrap: wrap; margin: 1rem 0; }
-        .modal-imdb { background: #f5c518; color: #000; padding: 0.2rem 0.8rem; border-radius: 20px; font-weight: bold; }
-        .modal-year, .modal-runtime { background: rgba(255,255,255,0.1); padding: 0.2rem 0.8rem; border-radius: 20px; }
-        .modal-plot { margin: 1rem 0; line-height: 1.6; color: #cbd5e1; }
-        .modal-plot h4 { color: #f5c518; margin-bottom: 0.5rem; }
-        .modal-watch-btn { width: 100%; padding: 0.8rem; background: #f5c518; border: none; border-radius: 40px; font-weight: bold; cursor: pointer; margin-top: 1rem; transition: all 0.2s; }
-        .modal-watch-btn:hover { background: #f97316; transform: scale(1.02); }
+        .modal-title { font-size: 1.3rem; font-weight: 700; }
+        .modal-meta { display: flex; gap: 0.6rem; flex-wrap: wrap; margin: 1rem 0; }
+        .modal-imdb { background: #f5c518; color: #000; padding: 0.2rem 0.7rem; border-radius: 20px; font-weight: bold; font-size: 0.8rem; }
+        .modal-year, .modal-runtime { background: rgba(255,255,255,0.1); padding: 0.2rem 0.7rem; border-radius: 20px; font-size: 0.8rem; }
+        .modal-plot { margin: 1rem 0; line-height: 1.5; color: #cbd5e1; font-size: 0.85rem; }
+        .modal-plot h4 { color: #f5c518; margin-bottom: 0.5rem; font-size: 0.9rem; }
+        .modal-watch-btn { width: 100%; padding: 0.7rem; background: #f5c518; border: none; border-radius: 40px; font-weight: bold; cursor: pointer; margin-top: 1rem; }
         .footer { text-align: center; padding: 1.5rem; font-size: 0.7rem; color: #475569; }
-        .stats { text-align: center; padding: 0.5rem; color: #f5c518; font-size: 0.8rem; }
+        .stats { text-align: center; padding: 0.5rem; color: #f5c518; font-size: 0.75rem; }
         .loading { text-align: center; padding: 3rem; }
         .loading i { font-size: 2rem; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .region-badge { background: #1e293b; display: inline-block; padding: 0.2rem 1rem; border-radius: 20px; font-size: 0.7rem; margin: 0.5rem 0.2rem; }
-        @media (max-width: 600px) {
-            .film-grid { gap: 1rem; padding: 0.5rem 1rem; }
-            .poster { height: 250px; }
-            .cat-btn { padding: 0.3rem 0.8rem; font-size: 0.7rem; }
-        }
+        .region-badge { background: #1e293b; display: inline-block; padding: 0.2rem 0.8rem; border-radius: 20px; font-size: 0.65rem; margin: 0.3rem 0.2rem; }
     </style>
 </head>
 <body>
 <div class="header">
-    <div class="logo"><h1><i class="fas fa-film"></i> ABICAN FİLMLER | IMDb RESMİ</h1></div>
+    <div class="logo"><h1><i class="fas fa-film"></i> ABICAN FİLMLER</h1></div>
     <button class="back-btn" onclick="window.location.href='index.html'"><i class="fas fa-arrow-left"></i> Ana Menü</button>
 </div>
 <div style="text-align: center;">
-    <span class="region-badge"><i class="fab fa-imdb"></i> IMDb Resmi Puanlar (title.ratings.tsv)</span>
-    <span class="region-badge"><i class="fas fa-globe-americas"></i> USA / UK / Europe</span>
-    <span class="region-badge"><i class="fas fa-ban"></i> Anime / Kore / Çin yok</span>
+    <span class="region-badge"><i class="fab fa-imdb"></i> IMDb Resmi Puanlar</span>
+    <span class="region-badge"><i class="fas fa-globe-americas"></i> USA/UK/Europe</span>
+    <span class="region-badge"><i class="fas fa-ban"></i> Türk/Asya/Anime yok</span>
 </div>
 <div class="category-tabs" id="categoryContainer"></div>
 <div class="stats" id="stats"></div>
 <div class="film-grid" id="filmGrid"><div class="loading"><i class="fas fa-spinner fa-spin"></i><br>Filmler yükleniyor...</div></div>
-<div class="footer"><i class="fab fa-imdb"></i> IMDb resmi veri seti • <i class="fas fa-check-circle"></i> İzlediklerin kaybolur</div>
+<div class="footer"><i class="fab fa-imdb"></i> IMDb Resmi Veri Seti • <i class="fas fa-check-circle"></i> İzlediklerin kaybolur</div>
 <div id="modal" class="modal"><div class="modal-content"><div class="modal-header"><img id="modalPoster" class="modal-poster" src=""><button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button></div><div class="modal-body"><h2 class="modal-title" id="modalTitle"></h2><div class="modal-meta"><span class="modal-imdb" id="modalImdb"></span><span class="modal-year" id="modalYear"></span><span class="modal-runtime" id="modalRuntime"></span></div><div class="modal-plot"><h4><i class="fas fa-align-left"></i> Konusu</h4><p id="modalPlot"></p></div><button class="modal-watch-btn" id="modalWatchBtn"><i class="fas fa-eye"></i> İZLEDİM</button></div></div></div>
 <script>
     let allMovies = [];
@@ -83,8 +75,9 @@
             if (!response.ok) throw new Error('Dosya bulunamadı');
             const data = await response.json();
             allMovies = Object.values(data.movies || []);
+            // Poster URL'leri (TMDB placeholder - gerçek poster için API key gerek)
             allMovies.forEach(m => { 
-                m.poster = `https://via.placeholder.com/300x450?text=${encodeURIComponent(m.title)}`; 
+                m.poster = `https://image.tmdb.org/t/p/w500/${m.id.replace('tt', '')}.jpg`; 
                 if (m.runtime && m.runtime !== '?' && m.runtime !== '\\N') {
                     const mins = parseInt(m.runtime);
                     m.runtime_display = `${Math.floor(mins/60)}s ${mins%60}dk`;
@@ -96,8 +89,7 @@
             renderCategories();
             renderMovies();
         } catch(err) { 
-            console.error(err); 
-            document.getElementById("filmGrid").innerHTML = `<div style="text-align:center;padding:3rem;"><i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #f97316;"></i><p style="margin-top: 1rem;">imdb_data.json dosyası bulunamadı!</p><p style="margin-top: 1rem; font-size: 0.8rem;">Önce convert.py ile JSON oluşturmalısın.</p></div>`;
+            document.getElementById("filmGrid").innerHTML = `<div style="text-align:center;padding:3rem;"><i class="fas fa-exclamation-triangle"></i><p>imdb_data.json bulunamadı!<br>Önce Python scriptini çalıştır.</p></div>`;
         }
     }
     function saveWatched(id) { if(!watchedIds.includes(id)) { watchedIds.push(id); localStorage.setItem("watched_film_ids", JSON.stringify(watchedIds)); renderMovies(); if(currentMovieId===id) document.getElementById("modalWatchBtn").innerHTML='<i class="fas fa-check-circle"></i> İZLENDİ'; } }
@@ -105,15 +97,15 @@
     function getFiltered() { let movies = [...allMovies]; if(currentCategory!=="all") movies = movies.filter(m=>m.genres && m.genres.includes(currentCategory)); return movies.filter(m=>!isWatched(m.id)); }
     function renderMovies() {
         const movies = getFiltered();
-        document.getElementById("stats").innerHTML = `<i class="fab fa-imdb"></i> Toplam ${movies.length} / ${allMovies.length} film | IMDb Resmi Puanlar`;
-        if(movies.length===0) { document.getElementById("filmGrid").innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:3rem;"><i class="fas fa-trophy" style="font-size: 3rem; color: #f5c518;"></i><p style="margin-top: 1rem;">🎉 Tüm filmleri izledin!</p></div>`; return; }
-        document.getElementById("filmGrid").innerHTML = movies.map(m => `<div class="film-card" data-id="${m.id}"><img class="poster" src="${m.poster}" onerror="this.src='https://via.placeholder.com/300x450?text=Poster+Yok'"><div class="info"><div class="title">${m.title.length>25?m.title.substring(0,22)+'...':m.title}</div><div class="imdb"><i class="fab fa-imdb"></i> ${m.imdb}</div><div class="year"><i class="far fa-calendar-alt"></i> ${m.year}</div><button class="watched-btn ${isWatched(m.id)?'watched':''}" data-id="${m.id}">${isWatched(m.id)?'<i class="fas fa-check-circle"></i> İZLENDİ':'<i class="fas fa-eye"></i> İZLEDİM'}</button></div></div>`).join('');
+        document.getElementById("stats").innerHTML = `<i class="fab fa-imdb"></i> ${movies.length} / ${allMovies.length} film | Sadece USA/UK/Europe`;
+        if(movies.length===0) { document.getElementById("filmGrid").innerHTML = `<div style="text-align:center;padding:3rem;"><i class="fas fa-trophy"></i><p>🎉 Tüm filmleri izledin!</p></div>`; return; }
+        document.getElementById("filmGrid").innerHTML = movies.map(m => `<div class="film-card" data-id="${m.id}"><img class="poster" src="${m.poster}" onerror="this.src='https://via.placeholder.com/300x450?text=${encodeURIComponent(m.title)}'"><div class="info"><div class="title">${m.title.length>25?m.title.substring(0,22)+'...':m.title}</div><div class="imdb"><i class="fab fa-imdb"></i> ${m.imdb}</div><div class="year"><i class="far fa-calendar-alt"></i> ${m.year}</div><button class="watched-btn ${isWatched(m.id)?'watched':''}" data-id="${m.id}">${isWatched(m.id)?'<i class="fas fa-check-circle"></i> İZLENDİ':'<i class="fas fa-eye"></i> İZLEDİM'}</button></div></div>`).join('');
         document.querySelectorAll('.film-card').forEach(card => { card.addEventListener('click', (e) => { if(e.target.classList.contains('watched-btn')) return; const movie = allMovies.find(m=>m.id===card.dataset.id); if(movie) openModal(movie); }); });
         document.querySelectorAll('.watched-btn:not(.watched)').forEach(btn => { btn.addEventListener('click', (e) => { e.stopPropagation(); saveWatched(btn.dataset.id); renderMovies(); }); });
     }
-    function openModal(m) { currentMovieId=m.id; document.getElementById("modalPoster").src=m.poster; document.getElementById("modalTitle").innerHTML=m.title; document.getElementById("modalImdb").innerHTML=`<i class="fab fa-imdb"></i> ${m.imdb}`; document.getElementById("modalYear").innerHTML=`<i class="far fa-calendar-alt"></i> ${m.year}`; document.getElementById("modalRuntime").innerHTML=`<i class="far fa-clock"></i> ${m.runtime_display || '?'}`; document.getElementById("modalPlot").innerHTML=m.plot; document.getElementById("modalWatchBtn").innerHTML=isWatched(m.id)?'<i class="fas fa-check-circle"></i> İZLENDİ':'<i class="fas fa-eye"></i> İZLEDİM'; document.getElementById("modal").style.display="flex"; }
+    function openModal(m) { currentMovieId=m.id; document.getElementById("modalPoster").src=m.poster; document.getElementById("modalTitle").innerHTML=m.title; document.getElementById("modalImdb").innerHTML=`<i class="fab fa-imdb"></i> ${m.imdb}`; document.getElementById("modalYear").innerHTML=`<i class="far fa-calendar-alt"></i> ${m.year}`; document.getElementById("modalRuntime").innerHTML=`<i class="far fa-clock"></i> ${m.runtime_display}`; document.getElementById("modalPlot").innerHTML=m.plot; document.getElementById("modalWatchBtn").innerHTML=isWatched(m.id)?'<i class="fas fa-check-circle"></i> İZLENDİ':'<i class="fas fa-eye"></i> İZLEDİM'; document.getElementById("modal").style.display="flex"; }
     function closeModal() { document.getElementById("modal").style.display="none"; currentMovieId=null; }
-    function renderCategories() { const cats=["all","Action","Comedy","Drama","Horror","Sci-Fi","Romance","Crime","Thriller","Fantasy","Mystery","Adventure"]; document.getElementById("categoryContainer").innerHTML=cats.map(c=>`<button class="cat-btn ${currentCategory===c?'active':''}" data-cat="${c}"><i class="fas ${c==='all'?'fa-border-all':c==='Action'?'fa-fist-raised':c==='Drama'?'fa-mask':c==='Comedy'?'fa-laugh':c==='Horror'?'fa-ghost':c==='Sci-Fi'?'fa-rocket':'fa-tag'}"></i> ${c==='all'?'Tümü':c}</button>`).join(''); document.querySelectorAll('.cat-btn').forEach(btn=>{btn.addEventListener('click',()=>{currentCategory=btn.dataset.cat;renderCategories();renderMovies();});}); }
+    function renderCategories() { const cats=["all","Action","Comedy","Drama","Horror","Sci-Fi","Romance","Crime","Thriller","Fantasy","Mystery"]; document.getElementById("categoryContainer").innerHTML=cats.map(c=>`<button class="cat-btn ${currentCategory===c?'active':''}" data-cat="${c}"><i class="fas ${c==='all'?'fa-border-all':c==='Action'?'fa-fist-raised':c==='Drama'?'fa-mask':c==='Comedy'?'fa-laugh':c==='Horror'?'fa-ghost':c==='Sci-Fi'?'fa-rocket':'fa-tag'}"></i> ${c==='all'?'Tümü':c}</button>`).join(''); document.querySelectorAll('.cat-btn').forEach(btn=>{btn.addEventListener('click',()=>{currentCategory=btn.dataset.cat;renderCategories();renderMovies();});}); }
     window.onclick = function(e) { if(e.target===document.getElementById("modal")) closeModal(); }
     document.getElementById("modalWatchBtn").addEventListener("click",()=>{if(currentMovieId && !isWatched(currentMovieId)) saveWatched(currentMovieId);});
     loadData();
